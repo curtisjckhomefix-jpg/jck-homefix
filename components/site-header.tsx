@@ -5,131 +5,136 @@ import { useState } from "react";
 import { business, telHref } from "@/lib/business";
 import { services } from "@/lib/services";
 import { areas } from "@/lib/areas";
-import { Phone, Menu, Close, Clock, ArrowRight } from "@/components/icons";
+import { Phone, Menu, Close, ArrowRight } from "@/components/icons";
 
 const nav = [
   { href: "/services", label: "Services" },
-  { href: "/areas", label: "Service Areas" },
-  { href: "/gallery", label: "Before & After" },
+  { href: "/areas", label: "Areas" },
+  { href: "/gallery", label: "Work" },
   { href: "/reviews", label: "Reviews" },
   { href: "/about", label: "About" },
 ];
+
+/** Wordmark. Boxed monogram + stacked lockup, like equipment labelling. */
+function Wordmark() {
+  return (
+    <Link href="/" className="group flex items-center gap-3" aria-label={`${business.name} home`}>
+      <span className="grid h-11 w-11 shrink-0 place-items-center bg-hivis-400 font-display text-base tracking-tight text-carbon-950 transition-colors group-hover:bg-hivis-300">
+        JCK
+      </span>
+      <span className="leading-none">
+        <span className="block font-display text-lg uppercase tracking-tight text-paper-50">
+          HomeFix America
+        </span>
+        <span className="stamp mt-1.5 block text-carbon-400">
+          Water Damage Restoration
+        </span>
+      </span>
+    </Link>
+  );
+}
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      {/* Emergency bar — the single most important element on the site. */}
-      <div className="bg-alert-700 text-white">
-        <div className="container-page flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-2 text-sm">
-          <p className="flex items-center gap-2 font-medium">
-            <Clock className="h-4 w-4 shrink-0" />
-            <span>
-              Water in your home right now? We answer{" "}
-              <strong className="font-bold">24/7</strong>.
+      {/* Status strip. Reads like a dispatch board, not a promo banner. */}
+      <div className="border-b border-carbon-800 bg-carbon-950">
+        <div className="container-page flex flex-wrap items-center justify-between gap-x-8 gap-y-2 py-2.5">
+          <p className="stamp flex items-center gap-2.5 text-carbon-400">
+            <span className="relative flex h-2 w-2" aria-hidden="true">
+              <span className="absolute inline-flex h-full w-full animate-ping bg-hivis-400 opacity-60" />
+              <span className="relative inline-flex h-2 w-2 bg-hivis-400" />
             </span>
+            Crews available · Answering now
           </p>
           <a
             href={telHref}
-            className="flex items-center gap-2 font-bold underline decoration-2 underline-offset-4 transition hover:text-sand-200"
+            className="stamp text-hivis-400 transition-colors hover:text-hivis-300"
           >
-            <Phone className="h-4 w-4" />
-            <span>{business.phone.display}</span>
+            24/7 Emergency — {business.phone.display}
           </a>
         </div>
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-sand-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-        <div className="container-page flex h-18 items-center justify-between gap-4 py-3">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5"
-            aria-label={`${business.name} home`}
-          >
-            <span className="grid h-10 w-10 place-items-center rounded-lg bg-ink-900 text-base font-black tracking-tight text-water-300">
-              JCK
-            </span>
-            <span className="leading-tight">
-              <span className="block font-display text-lg font-bold text-ink-900">
-                HomeFix America
-              </span>
-              <span className="block text-xs font-medium text-ink-600">
-                Water Damage Restoration
-              </span>
-            </span>
-          </Link>
+      <header className="sticky top-0 z-50 border-b-2 border-carbon-800 bg-carbon-950/95 backdrop-blur">
+        <div className="container-page flex items-center justify-between gap-6 py-4">
+          <Wordmark />
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
+          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main">
             {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-md px-3 py-2 text-sm font-semibold text-ink-800 transition hover:bg-sand-100 hover:text-water-700"
+                className="stamp text-carbon-300 transition-colors hover:text-hivis-400"
               >
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/contact"
-              className="ml-2 inline-flex items-center gap-1.5 rounded-lg bg-ink-900 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-ink-800"
+            <a
+              href={telHref}
+              className="flex items-center gap-2.5 bg-hivis-400 px-6 py-3.5 font-display text-base uppercase tracking-tight text-carbon-950 transition-colors hover:bg-hivis-300"
             >
-              Free Assessment
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+              <Phone className="h-4 w-4" />
+              Call now
+            </a>
           </nav>
 
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="grid h-11 w-11 place-items-center rounded-lg border border-sand-300 text-ink-800 lg:hidden"
+            className="grid h-11 w-11 place-items-center border-2 border-carbon-700 text-paper-100 transition-colors hover:border-hivis-400 hover:text-hivis-400 lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
           >
-            {open ? <Close className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {open ? <Close className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
         {open ? (
           <div
             id="mobile-nav"
-            className="border-t border-sand-200 bg-white lg:hidden"
+            className="max-h-[calc(100dvh-8rem)] overflow-y-auto border-t-2 border-carbon-800 bg-carbon-950 lg:hidden"
           >
-            <div className="container-page space-y-6 py-6">
+            <div className="container-page space-y-8 py-8">
               <a
                 href={telHref}
-                className="flex items-center justify-center gap-2 rounded-xl bg-alert-600 px-4 py-4 text-lg font-bold text-white"
+                className="flex items-center justify-between gap-4 bg-hivis-400 px-6 py-5 text-carbon-950"
               >
-                <Phone className="h-5 w-5" />
-                Call {business.phone.display}
+                <span>
+                  <span className="stamp block">Call 24/7</span>
+                  <span className="mt-1 block font-display text-xl tracking-tight">
+                    {business.phone.display}
+                  </span>
+                </span>
+                <Phone className="h-6 w-6" />
               </a>
 
-              <nav className="grid gap-1" aria-label="Mobile">
+              <nav className="border-t border-carbon-800" aria-label="Mobile">
                 {nav.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="flex items-center justify-between rounded-lg px-3 py-3 text-base font-semibold text-ink-900 hover:bg-sand-100"
+                    className="flex items-center justify-between border-b border-carbon-800 py-4 font-display text-2xl uppercase tracking-tight text-paper-50 transition-colors hover:text-hivis-400"
                   >
                     {item.label}
-                    <ArrowRight className="h-4 w-4 text-ink-600" />
+                    <ArrowRight className="h-5 w-5 text-carbon-600" />
                   </Link>
                 ))}
               </nav>
 
               <div>
-                <p className="px-3 pb-2 text-xs font-bold uppercase tracking-wider text-ink-600">
-                  Services
-                </p>
-                <div className="grid gap-0.5">
+                <p className="stamp mb-4 text-carbon-500">Services</p>
+                <div className="grid gap-2">
                   {services.map((s) => (
                     <Link
                       key={s.slug}
                       href={`/services/${s.slug}`}
                       onClick={() => setOpen(false)}
-                      className="rounded-lg px-3 py-2 text-sm text-ink-800 hover:bg-sand-100"
+                      className="text-sm text-carbon-300 transition-colors hover:text-hivis-400"
                     >
                       {s.name}
                     </Link>
@@ -138,16 +143,14 @@ export function SiteHeader() {
               </div>
 
               <div>
-                <p className="px-3 pb-2 text-xs font-bold uppercase tracking-wider text-ink-600">
-                  Service Areas
-                </p>
-                <div className="flex flex-wrap gap-1.5 px-3">
+                <p className="stamp mb-4 text-carbon-500">Areas</p>
+                <div className="flex flex-wrap gap-2">
                   {areas.map((a) => (
                     <Link
                       key={a.slug}
                       href={`/areas/${a.slug}`}
                       onClick={() => setOpen(false)}
-                      className="rounded-full border border-sand-300 px-3 py-1.5 text-xs font-medium text-ink-800 hover:border-water-400 hover:text-water-700"
+                      className="border border-carbon-700 px-3 py-1.5 font-mono text-xs uppercase tracking-wider text-carbon-300 transition-colors hover:border-hivis-400 hover:text-hivis-400"
                     >
                       {a.city}
                     </Link>

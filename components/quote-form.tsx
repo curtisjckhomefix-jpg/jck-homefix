@@ -14,16 +14,16 @@ const urgencyOptions = [
     label: "Emergency — water is active right now",
     hint: "Please call instead if you can",
   },
-  { value: "urgent", label: "Urgent — it happened in the last day or two" },
-  { value: "recent", label: "Recent — happened within the last couple weeks" },
-  { value: "ongoing", label: "Ongoing — musty smell, damp, or suspected mold" },
-  { value: "inspection", label: "Just want an inspection or second opinion" },
+  { value: "urgent", label: "Urgent — happened in the last day or two" },
+  { value: "recent", label: "Recent — within the last couple of weeks" },
+  { value: "ongoing", label: "Ongoing — musty, damp, or suspected mold" },
+  { value: "inspection", label: "Inspection or second opinion" },
 ];
 
 const inputBase =
-  "w-full rounded-lg border border-sand-300 bg-white px-4 py-3 text-ink-900 placeholder:text-ink-600/50 transition focus:border-water-500 focus:outline-none focus:ring-4 focus:ring-water-500/15";
+  "w-full border-2 border-carbon-300 bg-paper-50 px-4 py-3.5 font-sans text-carbon-950 transition-colors placeholder:text-carbon-500 focus:border-carbon-950 focus:outline-none";
 
-const labelBase = "block text-sm font-semibold text-ink-900";
+const labelBase = "stamp block text-carbon-600";
 
 export function QuoteForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -71,20 +71,21 @@ export function QuoteForm() {
 
   if (status === "success") {
     return (
-      <div className="rounded-2xl border border-water-200 bg-white p-8 shadow-card">
-        <span className="grid h-14 w-14 place-items-center rounded-full bg-water-100 text-water-700">
-          <Check className="h-7 w-7" />
+      <div className="border-2 border-carbon-950 bg-carbon-950 p-8 text-paper-50 sm:p-10">
+        <span className="grid h-12 w-12 place-items-center bg-hivis-400 text-carbon-950">
+          <Check className="h-6 w-6" />
         </span>
-        <h3 className="mt-5 font-display text-2xl font-bold text-ink-900">
-          Got it — we have your request.
+        <h3 className="mt-6 font-display text-3xl uppercase tracking-tight">
+          Got it.
         </h3>
-        <p className="mt-3 leading-relaxed text-ink-700">
-          We will call you back shortly. If the situation changes or water starts
-          moving again, do not wait on us to call — pick up the phone.
+        <p className="mt-4 leading-relaxed text-carbon-300">
+          We have your request and will call you back shortly. If the situation
+          changes or water starts moving again, do not wait on us — pick up the
+          phone.
         </p>
         <a
           href={telHref}
-          className="mt-6 inline-flex items-center gap-2.5 rounded-xl bg-alert-600 px-6 py-4 text-base font-bold text-white transition hover:bg-alert-700"
+          className="mt-8 inline-flex items-center gap-3 bg-hivis-400 px-7 py-4 font-display text-lg uppercase tracking-tight text-carbon-950 transition-colors hover:bg-hivis-300"
         >
           <Phone className="h-5 w-5" />
           {business.phone.display}
@@ -96,11 +97,10 @@ export function QuoteForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-sand-200 bg-white p-6 shadow-card sm:p-8"
+      className="border-2 border-carbon-950 bg-paper-100 p-6 text-carbon-950 sm:p-8"
       noValidate
     >
-      {/* Honeypot — hidden from humans, catches naive bots. Real protection is
-          the Turnstile hook documented in app/api/quote/route.ts. */}
+      {/* Honeypot — hidden from humans, catches naive bots. */}
       <div aria-hidden="true" className="absolute left-[-9999px] h-0 overflow-hidden">
         <label htmlFor="company_website">Do not fill this in</label>
         <input
@@ -112,10 +112,10 @@ export function QuoteForm() {
         />
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label htmlFor="name" className={labelBase}>
-            Your name <span className="text-alert-600">*</span>
+            Your name <span className="text-siren-600">*</span>
           </label>
           <input
             id="name"
@@ -123,14 +123,14 @@ export function QuoteForm() {
             type="text"
             required
             autoComplete="name"
-            className={`${inputBase} mt-2`}
+            className={`${inputBase} mt-2.5`}
             placeholder="Jane Doe"
           />
         </div>
 
         <div>
           <label htmlFor="phone" className={labelBase}>
-            Phone <span className="text-alert-600">*</span>
+            Phone <span className="text-siren-600">*</span>
           </label>
           <input
             id="phone"
@@ -139,11 +139,11 @@ export function QuoteForm() {
             required
             autoComplete="tel"
             inputMode="tel"
-            className={`${inputBase} mt-2`}
+            className={`${inputBase} mt-2.5 font-mono`}
             placeholder="(360) 555-0142"
           />
-          <p className="mt-1.5 text-xs text-ink-600">
-            Fastest way to reach you. We call, we do not text-blast.
+          <p className="mt-2 text-xs text-carbon-600">
+            We call. We do not text-blast.
           </p>
         </div>
 
@@ -156,16 +156,22 @@ export function QuoteForm() {
             name="email"
             type="email"
             autoComplete="email"
-            className={`${inputBase} mt-2`}
+            className={`${inputBase} mt-2.5`}
             placeholder="jane@example.com"
           />
         </div>
 
         <div>
           <label htmlFor="city" className={labelBase}>
-            City <span className="text-alert-600">*</span>
+            City <span className="text-siren-600">*</span>
           </label>
-          <select id="city" name="city" required className={`${inputBase} mt-2`} defaultValue="">
+          <select
+            id="city"
+            name="city"
+            required
+            className={`${inputBase} mt-2.5`}
+            defaultValue=""
+          >
             <option value="" disabled>
               Select your city
             </option>
@@ -174,7 +180,7 @@ export function QuoteForm() {
                 {a.city}
               </option>
             ))}
-            <option value="Other">Somewhere else in Snohomish County</option>
+            <option value="Other">Elsewhere in Snohomish County</option>
           </select>
         </div>
 
@@ -182,7 +188,12 @@ export function QuoteForm() {
           <label htmlFor="service" className={labelBase}>
             What do you need?
           </label>
-          <select id="service" name="service" className={`${inputBase} mt-2`} defaultValue="">
+          <select
+            id="service"
+            name="service"
+            className={`${inputBase} mt-2.5`}
+            defaultValue=""
+          >
             <option value="">Not sure yet</option>
             {services.map((s) => (
               <option key={s.slug} value={s.name}>
@@ -194,14 +205,16 @@ export function QuoteForm() {
 
         <fieldset className="sm:col-span-2">
           <legend className={labelBase}>How urgent is it?</legend>
-          <div className="mt-2.5 grid gap-2">
-            {urgencyOptions.map((opt) => (
+          <div className="mt-3 grid gap-0 border-2 border-carbon-300">
+            {urgencyOptions.map((opt, i) => (
               <label
                 key={opt.value}
-                className={`flex cursor-pointer items-start gap-3 rounded-lg border px-4 py-3 transition ${
+                className={`flex cursor-pointer items-start gap-3.5 px-4 py-3.5 transition-colors ${
+                  i > 0 ? "border-t-2 border-carbon-300" : ""
+                } ${
                   urgency === opt.value
-                    ? "border-water-500 bg-water-50 ring-2 ring-water-500/20"
-                    : "border-sand-300 hover:border-sand-300 hover:bg-sand-50"
+                    ? "bg-carbon-950 text-paper-50"
+                    : "hover:bg-paper-200"
                 }`}
               >
                 <input
@@ -210,14 +223,18 @@ export function QuoteForm() {
                   value={opt.value}
                   checked={urgency === opt.value}
                   onChange={(e) => setUrgency(e.target.value)}
-                  className="mt-1 h-4 w-4 shrink-0 accent-water-600"
+                  className="mt-1 h-4 w-4 shrink-0 accent-hivis-500"
                 />
                 <span>
-                  <span className="block text-sm font-medium text-ink-900">
-                    {opt.label}
-                  </span>
+                  <span className="block text-sm font-medium">{opt.label}</span>
                   {opt.hint ? (
-                    <span className="block text-xs text-alert-700">{opt.hint}</span>
+                    <span
+                      className={`mt-0.5 block text-xs ${
+                        urgency === opt.value ? "text-hivis-400" : "text-siren-600"
+                      }`}
+                    >
+                      {opt.hint}
+                    </span>
                   ) : null}
                 </span>
               </label>
@@ -233,25 +250,25 @@ export function QuoteForm() {
             id="message"
             name="message"
             rows={4}
-            className={`${inputBase} mt-2 resize-y`}
-            placeholder="Water heater let go in the garage overnight, water got into the hallway carpet and I think under the wall into the bedroom."
+            className={`${inputBase} mt-2.5 resize-y`}
+            placeholder="Water heater let go in the garage overnight. Got into the hallway carpet and I think under the wall into the bedroom."
           />
         </div>
       </div>
 
       {urgency === "emergency" ? (
-        <div className="mt-5 flex gap-3 rounded-lg border border-alert-500/30 bg-alert-600/5 p-4">
-          <Alert className="h-5 w-5 shrink-0 text-alert-600" />
-          <p className="text-sm leading-relaxed text-ink-800">
+        <div className="mt-6 flex gap-4 border-2 border-siren-600 bg-siren-600/10 p-4">
+          <Alert className="h-5 w-5 shrink-0 text-siren-600" />
+          <p className="text-sm leading-relaxed text-carbon-900">
             <strong className="font-semibold">
               If water is moving right now, call instead.
             </strong>{" "}
-            A form waits for someone to read it. The phone rings a person, and
-            in an active loss that difference is measured in square feet of
+            A form waits for someone to read it. The phone rings a person, and in
+            an active loss that difference is measured in square feet of
             flooring.{" "}
             <a
               href={telHref}
-              className="font-bold text-alert-700 underline underline-offset-2"
+              className="font-mono font-semibold text-siren-600 underline underline-offset-2"
             >
               {business.phone.display}
             </a>
@@ -262,10 +279,10 @@ export function QuoteForm() {
       {status === "error" && error ? (
         <p
           role="alert"
-          className="mt-5 rounded-lg border border-alert-500/30 bg-alert-600/5 p-4 text-sm text-alert-700"
+          className="mt-6 border-2 border-siren-600 bg-siren-600/10 p-4 text-sm text-carbon-900"
         >
           {error} You can always reach us at{" "}
-          <a href={telHref} className="font-bold underline">
+          <a href={telHref} className="font-mono font-semibold underline">
             {business.phone.display}
           </a>
           .
@@ -275,12 +292,12 @@ export function QuoteForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-ink-900 px-6 py-4 text-base font-bold text-white transition hover:bg-ink-800 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-8 flex w-full items-center justify-center gap-3 bg-carbon-950 px-6 py-5 font-display text-lg uppercase tracking-tight text-paper-50 transition-colors hover:bg-carbon-800 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {status === "submitting" ? "Sending…" : "Request My Free Assessment"}
+        {status === "submitting" ? "Sending…" : "Request my free assessment"}
       </button>
 
-      <p className="mt-4 text-center text-xs leading-relaxed text-ink-600">
+      <p className="mt-5 text-center text-xs leading-relaxed text-carbon-600">
         We use your details to respond to this request and nothing else. No
         lists, no resale, no marketing blasts.
       </p>

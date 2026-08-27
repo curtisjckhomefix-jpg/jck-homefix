@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Archivo_Black, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -7,15 +7,28 @@ import { StickyCallBar } from "@/components/sticky-call-bar";
 import { business, addressLine } from "@/lib/business";
 import { areaCityNames } from "@/lib/areas";
 
-const inter = Inter({
+/* Display: heavy industrial grotesque — signage, not startup. */
+const archivoBlack = Archivo_Black({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: "400",
+  variable: "--font-archivo-black",
   display: "swap",
 });
 
-const outfit = Outfit({
+/* Body: Plex has genuine technical/industrial heritage and is emphatically
+   not Inter. */
+const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-plex-sans",
+  display: "swap",
+});
+
+/* Mono: anything that is a reading, a number, or a record. */
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-mono",
   display: "swap",
 });
 
@@ -114,9 +127,12 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
+    <html
+      lang="en"
+      className={`${archivoBlack.variable} ${plexSans.variable} ${plexMono.variable}`}
+    >
       {/* pb on mobile clears the fixed StickyCallBar so it never covers the footer */}
-      <body className="flex min-h-screen flex-col bg-white pb-28 antialiased lg:pb-0">
+      <body className="flex min-h-screen flex-col bg-carbon-950 pb-28 antialiased lg:pb-0">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -125,7 +141,7 @@ export default function RootLayout({
         />
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-ink-900 focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-white"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-carbon-900 focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-white"
         >
           Skip to content
         </a>

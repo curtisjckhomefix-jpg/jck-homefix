@@ -2,8 +2,15 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { services } from "@/lib/services";
 import { business } from "@/lib/business";
-import { serviceIcons, ArrowRight } from "@/components/icons";
-import { PageHero, Section, CtaBanner, Breadcrumbs, CallButton, QuoteButton } from "@/components/ui";
+import { ArrowRight } from "@/components/icons";
+import {
+  PageHero,
+  Section,
+  CtaBanner,
+  Breadcrumbs,
+  CallButton,
+  QuoteButton,
+} from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Water Damage Restoration Services",
@@ -16,52 +23,54 @@ export default function ServicesPage() {
   return (
     <>
       <PageHero
-        eyebrow="Our services"
-        title="Water damage restoration, start to finish"
+        stamp="Services"
+        title="Start to finish, one crew"
         lead={`Every stage of a water loss for ${business.address.city} and Snohomish County — from the emergency call at 2am through to the drywall going back up.`}
       >
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row">
           <CallButton />
-          <QuoteButton variant="light" />
+          <QuoteButton />
         </div>
       </PageHero>
 
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Services" }]} />
 
-      <Section>
-        <div className="grid gap-6 lg:grid-cols-2">
-          {services.map((service) => {
-            const Icon = serviceIcons[service.icon] ?? serviceIcons.droplet;
-            return (
+      <Section tone="carbon">
+        <ul>
+          {services.map((service, i) => (
+            <li key={service.slug}>
               <Link
-                key={service.slug}
                 href={`/services/${service.slug}`}
-                className="group flex flex-col rounded-2xl border border-sand-200 bg-white p-7 shadow-card transition hover:-translate-y-0.5 hover:border-water-300 hover:shadow-lift"
+                className="group grid gap-6 border-t border-carbon-700 py-10 transition-colors hover:border-hivis-400 lg:grid-cols-12 lg:gap-10"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-water-100 text-water-700 transition group-hover:bg-water-600 group-hover:text-white">
-                    <Icon className="h-6 w-6" />
+                <div className="flex items-baseline gap-6 lg:col-span-5">
+                  <span className="stamp shrink-0 text-carbon-600 transition-colors group-hover:text-hivis-400">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
+                  <h2 className="font-display text-3xl uppercase tracking-tight text-paper-50 transition-colors group-hover:text-hivis-400 sm:text-4xl">
+                    {service.name}
+                  </h2>
+                </div>
+
+                <div className="lg:col-span-6">
+                  <p className="leading-relaxed text-carbon-400">
+                    {service.blurb}
+                  </p>
                   {service.emergency ? (
-                    <span className="rounded-full bg-alert-600/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-alert-700">
+                    <span className="stamp mt-4 inline-block border border-hivis-400/50 px-2.5 py-1 text-hivis-400">
                       24/7 emergency
                     </span>
                   ) : null}
                 </div>
-                <h2 className="mt-5 font-display text-2xl font-bold text-ink-900">
-                  {service.name}
-                </h2>
-                <p className="mt-3 flex-1 leading-relaxed text-ink-700">
-                  {service.blurb}
-                </p>
-                <span className="mt-6 inline-flex items-center gap-1.5 font-bold text-water-700">
-                  What this involves
-                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-                </span>
+
+                <div className="flex items-center lg:col-span-1 lg:justify-end">
+                  <ArrowRight className="h-6 w-6 text-carbon-600 transition-all group-hover:translate-x-1.5 group-hover:text-hivis-400" />
+                </div>
               </Link>
-            );
-          })}
-        </div>
+            </li>
+          ))}
+          <li aria-hidden="true" className="border-t border-carbon-700" />
+        </ul>
       </Section>
 
       <CtaBanner />

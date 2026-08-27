@@ -1,17 +1,20 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { business, telHref } from "@/lib/business";
 import { services } from "@/lib/services";
 import { areas } from "@/lib/areas";
 import { hasReviews, featuredReviews, averageRating } from "@/lib/reviews";
-import { serviceIcons, ArrowRight, Star, Alert, Clock, Shield, MapPin } from "@/components/icons";
+import { ArrowRight, Star, Phone } from "@/components/icons";
 import {
   Section,
   SectionHeading,
+  Stamp,
   CallButton,
   QuoteButton,
   CtaBanner,
   CheckList,
+  Readout,
 } from "@/components/ui";
 import { QuoteForm } from "@/components/quote-form";
 
@@ -21,458 +24,516 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const emergencySteps = [
+const triage = [
   {
     step: "Stop the water",
-    body: "Shut off the supply at the fixture, or the main if you cannot isolate it. If it is coming from outside, you cannot stop it — skip to the next step.",
+    body: "Shut off at the fixture, or the main if you cannot isolate it.",
   },
   {
     step: "Kill the power",
-    body: "If water is anywhere near outlets, cords, or a panel, shut off the breaker to those rooms. Do not walk into standing water in a live room.",
+    body: "Breaker off to any wet room. Never step into standing water in a live room.",
   },
   {
     step: "Photograph everything",
-    body: "Before you move a single thing. Wide shots and close-ups. This is what your insurance adjuster will be working from, and you cannot recreate it later.",
+    body: "Before you move anything. Your adjuster works from these.",
   },
-  {
-    step: "Call us",
-    body: "The clock that matters started when the water did. We will talk you through anything else you should do while we are on the way.",
-  },
+  { step: "Call us", body: "We will talk you through the rest on the way." },
 ];
 
 const process = [
   {
     n: "01",
     title: "You call, a person answers",
-    body: "Any hour. Not a call center, not a voicemail box. We ask what happened, what you can see, and whether it is still actively leaking.",
+    body: "Any hour. Not a call centre, not a voicemail box. We ask what happened, what you can see, and whether it is still running.",
   },
   {
     n: "02",
-    title: "We get on site and assess",
-    body: "Moisture meters and thermal imaging to map how far the water actually went, which is nearly always further than the visible wet area.",
+    title: "We map the real damage",
+    body: "Moisture meters and thermal imaging. The wet area is nearly always bigger than the part you can see.",
   },
   {
     n: "03",
     title: "Extract and contain",
-    body: "Standing water comes out first, then we contain the affected area and get equipment placed the same visit wherever possible.",
+    body: "Standing water out first, then containment and equipment placed on the same visit wherever possible.",
   },
   {
     n: "04",
     title: "Dry to a documented standard",
-    body: "Air movers and commercial dehumidifiers, with readings taken every day until materials match an unaffected baseline. Not a guess, not a schedule.",
+    body: "Readings taken daily until materials match an unaffected baseline. Not a guess. Not a schedule.",
   },
   {
     n: "05",
-    title: "Document for your claim",
-    body: "Photos, moisture logs, and scope, formatted the way adjusters expect. This is the part that decides whether your claim gets paid in full.",
+    title: "Document for the claim",
+    body: "Photos, logs and scope in the format adjusters expect. This is what decides whether you get paid in full.",
   },
   {
     n: "06",
-    title: "Put it back together",
-    body: "Drywall, flooring, paint, and trim, so you finish with a room rather than a dried-out shell and a list of contractors to call.",
+    title: "Put the room back",
+    body: "Drywall, flooring, paint, trim. You finish with a room, not a dried-out shell and a list of numbers to call.",
   },
 ];
 
-const trustPoints = [
-  {
-    icon: Clock,
-    title: "Answered 24/7, by us",
-    body: "Nights, weekends, holidays. The phone rings to a person who can actually dispatch, not an answering service taking a message for Monday.",
-  },
-  {
-    icon: MapPin,
-    title: "Actually local",
-    body: `Based in ${business.address.city}, not a franchise dispatching from three counties away. We know which streets flood and which neighborhoods are on crawl spaces.`,
-  },
-  {
-    icon: Shield,
-    title: "Licensed, bonded, insured",
-    body: "Registered with Washington L&I, and we will hand you the number before you ask so you can verify it yourself.",
-  },
-  {
-    icon: Alert,
-    title: "We work your claim with you",
-    body: "Documentation built for adjusters, and we talk to them directly if you want us to. Most of what gets denied gets denied on paperwork.",
-  },
-];
+/**
+ * Illustrative drying log. Explicitly labelled as an example — these are not
+ * readings from a real customer's job, and must never be presented as such.
+ */
+const dryingLog = {
+  rows: [
+    { location: "Subfloor / hall", readings: [42.1, 31.4, 19.8, 11.2] },
+    { location: "Base wall / bed 2", readings: [38.6, 24.0, 14.3, 9.6] },
+    { location: "Framing / bed 2", readings: [27.3, 19.1, 12.7, 9.1] },
+  ],
+  standard: 12,
+  baseline: 9.0,
+};
 
 export default function HomePage() {
   return (
     <>
-      {/* ---------------- HERO ---------------- */}
-      <section className="relative overflow-hidden bg-ink-950 text-white">
-        <div
-          aria-hidden="true"
-          className="hero-wash absolute -right-40 -top-52 h-[42rem] w-[42rem] rounded-full bg-water-600/25 blur-3xl"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute -bottom-40 -left-32 h-[28rem] w-[28rem] rounded-full bg-water-800/40 blur-3xl"
-        />
-        <div className="container-page relative py-16 sm:py-20 lg:py-28">
-          <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
-            <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-alert-500/40 bg-alert-600/15 px-3.5 py-1.5 text-sm font-semibold text-alert-400">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-alert-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-alert-500" />
-                </span>
-                Emergency crews available now
-              </p>
+      {/* ================= HERO ================= */}
+      <section className="grain blueprint relative overflow-hidden bg-carbon-950">
+        <div className="container-page relative pb-20 pt-16 sm:pt-20 lg:pb-28 lg:pt-24">
+          <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
+            {/* Headline column — deliberately overruns the halfway line */}
+            <div className="lg:col-span-7">
+              <div className="rise" style={{ "--i": 0 } as CSSProperties}>
+                <Stamp>
+                  Arlington · Snohomish County · Est. {business.founded}
+                </Stamp>
+              </div>
 
-              <h1 className="mt-6 text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-6xl">
-                Water damage in{" "}
-                <span className="text-water-300">{business.address.city}</span>?
-                We are on the way.
+              <h1
+                className="rise mt-7 text-[clamp(3rem,9vw,7rem)] text-paper-50"
+                style={{ "--i": 1 } as CSSProperties}
+              >
+                Water damage
+                <br />
+                <span className="text-hivis-400">does not wait</span>
+                <br />
+                for morning.
               </h1>
 
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-sand-200 sm:text-xl">
-                24/7 emergency water extraction, structural drying, and flood
-                cleanup across Snohomish County. Every hour the water sits, the
-                repair gets bigger — so call first and worry about the details
-                after.
+              <p
+                className="rise mt-8 max-w-xl text-lg leading-relaxed text-carbon-300 sm:text-xl"
+                style={{ "--i": 2 } as CSSProperties}
+              >
+                Emergency extraction, structural drying and flood cleanup across
+                Snohomish County. Every hour the water sits, the repair gets
+                bigger — so call first and sort the details after.
               </p>
 
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <CallButton className="text-lg" />
-                <QuoteButton variant="light" label="Request an Assessment" />
-              </div>
-
-              <dl className="mt-12 grid max-w-lg grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3">
-                <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-water-300">
-                    On site in
-                  </dt>
-                  <dd className="mt-1 font-display text-2xl font-bold">
-                    {business.responseTime}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-water-300">
-                    Phone answered
-                  </dt>
-                  <dd className="mt-1 font-display text-2xl font-bold">24/7</dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-water-300">
-                    Workmanship
-                  </dt>
-                  <dd className="mt-1 font-display text-2xl font-bold">
-                    12-month
-                  </dd>
-                </div>
-              </dl>
-            </div>
-
-            {/* Emergency triage card — gives real value before asking for anything */}
-            <div className="rounded-2xl border border-ink-800 bg-ink-900/80 p-6 shadow-lift backdrop-blur sm:p-8">
-              <div className="flex items-start gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-alert-600 text-white">
-                  <Alert className="h-5 w-5" />
-                </span>
-                <div>
-                  <h2 className="font-display text-xl font-bold text-white">
-                    Water coming in right now?
-                  </h2>
-                  <p className="mt-1 text-sm text-sand-300">
-                    Do these four things in this order.
-                  </p>
-                </div>
-              </div>
-
-              <ol className="mt-6 space-y-5">
-                {emergencySteps.map((s, i) => (
-                  <li key={s.step} className="flex gap-4">
-                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-water-600 text-sm font-bold text-white">
-                      {i + 1}
-                    </span>
-                    <div>
-                      <p className="font-semibold text-white">{s.step}</p>
-                      <p className="mt-1 text-sm leading-relaxed text-sand-300">
-                        {s.body}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-
-              <a
-                href={telHref}
-                className="mt-7 flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-4 text-lg font-bold text-ink-950 transition hover:bg-water-100"
+              <div
+                className="rise mt-10 flex flex-col gap-4 sm:flex-row"
+                style={{ "--i": 3 } as CSSProperties}
               >
-                {business.phone.display}
-              </a>
+                <CallButton />
+                <QuoteButton />
+              </div>
+
+              <div
+                className="rise mt-14 max-w-md"
+                style={{ "--i": 4 } as CSSProperties}
+              >
+                <Readout
+                  rows={[
+                    { label: "Typical arrival", value: business.responseTime },
+                    { label: "Phone answered", value: "24 / 7 / 365" },
+                    { label: "Workmanship", value: "12-month guarantee" },
+                    { label: "WA L&I reg.", value: business.license.lni },
+                  ]}
+                />
+              </div>
             </div>
+
+            {/* Triage panel — hard-edged, offset, breaks the grid downward */}
+            <aside
+              className="rise lg:col-span-5 lg:mt-16"
+              style={{ "--i": 3 } as CSSProperties}
+            >
+              <div className="border-2 border-hivis-400 bg-carbon-900">
+                <div className="flex items-center justify-between gap-4 bg-hivis-400 px-6 py-4">
+                  <h2 className="font-display text-xl uppercase tracking-tight text-carbon-950">
+                    Water coming in now?
+                  </h2>
+                  <span className="stamp shrink-0 text-carbon-900">Do this</span>
+                </div>
+
+                <ol className="divide-y divide-carbon-800">
+                  {triage.map((t, i) => (
+                    <li key={t.step} className="flex gap-5 px-6 py-5">
+                      <span className="stamp shrink-0 pt-1 text-hivis-400">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <div>
+                        <p className="font-display text-base uppercase tracking-tight text-paper-50">
+                          {t.step}
+                        </p>
+                        <p className="mt-1.5 text-sm leading-relaxed text-carbon-400">
+                          {t.body}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+
+                <a
+                  href={telHref}
+                  className="flex items-center justify-between gap-4 border-t-2 border-carbon-800 px-6 py-5 transition-colors hover:bg-carbon-850"
+                >
+                  <span>
+                    <span className="stamp block text-carbon-500">
+                      Emergency line
+                    </span>
+                    <span className="mt-1 block font-display text-2xl tracking-tight text-hivis-400">
+                      {business.phone.display}
+                    </span>
+                  </span>
+                  <Phone className="h-6 w-6 shrink-0 text-hivis-400" />
+                </a>
+              </div>
+            </aside>
           </div>
         </div>
+        <div aria-hidden="true" className="hazard-rule" />
       </section>
 
-      {/* ---------------- SERVICES ---------------- */}
-      <Section tone="sand">
-        <SectionHeading
-          eyebrow="What we do"
-          title="Every stage of a water loss, handled by one crew"
-          lead="From the moment the water is still moving through to the drywall going back up — so you are not project-managing four different contractors during the worst week of your year."
-        />
+      {/* ================= SERVICES — index, not cards ================= */}
+      <Section tone="carbon">
+        <div className="grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <SectionHeading
+              stamp="What we do"
+              title={
+                <>
+                  Every stage,
+                  <br />
+                  one crew.
+                </>
+              }
+              lead="From the moment the water is still moving through to the drywall going back up — so you are not project-managing four contractors during the worst week of your year."
+            />
+          </div>
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service) => {
-            const Icon = serviceIcons[service.icon] ?? serviceIcons.droplet;
-            return (
-              <Link
-                key={service.slug}
-                href={`/services/${service.slug}`}
-                className="group relative flex flex-col rounded-2xl border border-sand-200 bg-white p-6 shadow-card transition hover:-translate-y-0.5 hover:border-water-300 hover:shadow-lift"
-              >
-                {service.emergency ? (
-                  <span className="absolute right-5 top-5 rounded-full bg-alert-600/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-alert-700">
-                    24/7
+          <ul className="lg:col-span-7">
+            {services.map((service, i) => (
+              <li key={service.slug}>
+                <Link
+                  href={`/services/${service.slug}`}
+                  className="group flex items-baseline gap-6 border-t border-carbon-700 py-7 transition-colors hover:border-hivis-400 sm:gap-10"
+                >
+                  <span className="stamp shrink-0 text-carbon-600 transition-colors group-hover:text-hivis-400">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                ) : null}
-                <span className="grid h-12 w-12 place-items-center rounded-xl bg-water-100 text-water-700 transition group-hover:bg-water-600 group-hover:text-white">
-                  <Icon className="h-6 w-6" />
-                </span>
-                <h3 className="mt-5 font-display text-xl font-bold text-ink-900">
-                  {service.name}
-                </h3>
-                <p className="mt-2.5 flex-1 text-sm leading-relaxed text-ink-700">
-                  {service.blurb}
-                </p>
-                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-water-700">
-                  Learn more
-                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-                </span>
-              </Link>
-            );
-          })}
+                  <span className="flex-1">
+                    <span className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                      <span className="font-display text-2xl uppercase tracking-tight text-paper-50 transition-colors group-hover:text-hivis-400 sm:text-3xl">
+                        {service.name}
+                      </span>
+                      {service.emergency ? (
+                        <span className="stamp shrink-0 border border-hivis-400/50 px-2 py-0.5 text-hivis-400">
+                          24/7
+                        </span>
+                      ) : null}
+                    </span>
+                    <span className="mt-2.5 block max-w-xl leading-relaxed text-carbon-400">
+                      {service.blurb}
+                    </span>
+                  </span>
+                  <ArrowRight className="h-5 w-5 shrink-0 self-center text-carbon-600 transition-all group-hover:translate-x-1.5 group-hover:text-hivis-400" />
+                </Link>
+              </li>
+            ))}
+            <li aria-hidden="true" className="border-t border-carbon-700" />
+          </ul>
         </div>
       </Section>
 
-      {/* ---------------- PROCESS ---------------- */}
-      <Section>
+      {/* ========= THE DIFFERENTIATOR — an actual drying log ========= */}
+      <Section tone="carbonDeep" grid>
+        <div className="grid gap-14 lg:grid-cols-12 lg:items-center">
+          <div className="lg:col-span-5">
+            <SectionHeading
+              stamp="How you know it is dry"
+              title={
+                <>
+                  We show you
+                  <br />
+                  the numbers.
+                </>
+              }
+              lead="Anyone can point a fan at a wet floor and come back in three days. Drying is finished when the material matches an unaffected baseline — and the only way you can know that is if someone measures it and hands you the readings."
+            />
+            <p className="mt-6 leading-relaxed text-carbon-400">
+              Ours come to you daily. When the meters hit standard, the equipment
+              comes out — not a day later, because it bills by the day.
+            </p>
+            <div className="mt-9">
+              <QuoteButton label="Get an assessment" />
+            </div>
+          </div>
+
+          {/* Log sheet */}
+          <figure className="lg:col-span-7">
+            <div className="border-2 border-carbon-700 bg-carbon-900">
+              <figcaption className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-carbon-700 px-5 py-4">
+                <span className="stamp text-hivis-400">
+                  Drying log — supply line failure
+                </span>
+                <span className="stamp text-carbon-500">Example record</span>
+              </figcaption>
+
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[34rem] border-collapse text-left">
+                  <thead>
+                    <tr className="border-b border-carbon-700">
+                      <th scope="col" className="stamp px-5 py-3 text-carbon-500">
+                        Location
+                      </th>
+                      {["Day 1", "Day 2", "Day 3", "Day 4"].map((d) => (
+                        <th
+                          key={d}
+                          scope="col"
+                          className="stamp px-4 py-3 text-right text-carbon-500"
+                        >
+                          {d}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dryingLog.rows.map((row) => (
+                      <tr
+                        key={row.location}
+                        className="border-b border-carbon-800"
+                      >
+                        <th
+                          scope="row"
+                          className="px-5 py-4 text-sm font-medium text-paper-100"
+                        >
+                          {row.location}
+                        </th>
+                        {row.readings.map((v, i) => {
+                          const dry = v <= dryingLog.standard;
+                          return (
+                            <td
+                              key={i}
+                              className={`px-4 py-4 text-right font-mono text-sm tabular-nums ${
+                                dry ? "text-hivis-400" : "text-carbon-300"
+                              }`}
+                            >
+                              {v.toFixed(1)}%{dry ? " ✓" : ""}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-4 border-t-2 border-carbon-700 px-5 py-4">
+                <span className="stamp text-carbon-500">
+                  Dry standard ≤ {dryingLog.standard}%
+                </span>
+                <span className="stamp text-carbon-500">
+                  Unaffected baseline {dryingLog.baseline.toFixed(1)}%
+                </span>
+                <span className="stamp border border-hivis-400 px-2.5 py-1 text-hivis-400">
+                  Released day 4
+                </span>
+              </div>
+            </div>
+            <p className="stamp mt-4 text-carbon-600">
+              Illustrative figures — not a customer record
+            </p>
+          </figure>
+        </div>
+      </Section>
+
+      {/* ================= PROCESS ================= */}
+      <Section tone="paper">
         <SectionHeading
-          eyebrow="How it works"
+          tone="light"
+          stamp="Sequence"
           title="What actually happens after you call"
-          lead="No mystery, no vague promises. This is the sequence on essentially every job we run."
+          lead="No mystery, no vague promises. This is the run of work on essentially every job."
         />
-        <div className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        <ol className="mt-16 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {process.map((p) => (
-            <div key={p.n} className="relative">
-              <span className="font-display text-5xl font-black text-water-500">
-                {p.n}
-              </span>
-              <h3 className="mt-2 font-display text-xl font-bold text-ink-900">
+            <li key={p.n} className="border-t-2 border-carbon-950 pt-5">
+              <span className="stamp text-carbon-600">{p.n}</span>
+              <h3 className="mt-3 font-display text-2xl uppercase tracking-tight text-carbon-950">
                 {p.title}
               </h3>
-              <p className="mt-2.5 leading-relaxed text-ink-700">{p.body}</p>
-            </div>
+              <p className="mt-3 leading-relaxed text-carbon-700">{p.body}</p>
+            </li>
           ))}
-        </div>
+        </ol>
       </Section>
 
-      {/* ---------------- WHY US ---------------- */}
-      <Section tone="dark">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-          <div>
+      {/* ================= INSURANCE ================= */}
+      <Section tone="carbon">
+        <div className="grid gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-6">
             <SectionHeading
-              tone="dark"
-              eyebrow="Why homeowners call us"
-              title="The restoration company your neighbor actually recommends"
-              lead="Water damage brings out the worst in this industry — storm chasers, high-pressure contracts signed while you are panicking, and equipment left running for a week because it bills by the day. We are not that."
+              stamp="Insurance claims"
+              title={
+                <>
+                  Claims are lost
+                  <br />
+                  on paperwork.
+                </>
+              }
+              lead="Most underpaid water damage claims are not underpaid because the damage was small. They are underpaid because nobody documented it properly on day one."
             />
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <CallButton />
-              <QuoteButton variant="light" label="Get an honest assessment" />
-            </div>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2">
-            {trustPoints.map((point) => {
-              const Icon = point.icon;
-              return (
-                <div
-                  key={point.title}
-                  className="rounded-xl border border-ink-800 bg-ink-900/60 p-5"
-                >
-                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-water-600/20 text-water-300">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <h3 className="mt-4 font-display text-lg font-bold text-white">
-                    {point.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-sand-300">
-                    {point.body}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </Section>
-
-      {/* ---------------- INSURANCE ---------------- */}
-      <Section tone="sand">
-        <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <SectionHeading
-              eyebrow="Insurance claims"
-              title="The paperwork is where claims get lost"
-              lead="Most underpaid water damage claims are not underpaid because the damage was small. They are underpaid because nobody documented the damage properly on day one."
-            />
-            <p className="mt-6 leading-relaxed text-ink-700">
-              We photograph before we touch anything, log moisture readings
-              daily, and write scope in the format adjusters expect. If it helps,
-              we will talk to your adjuster directly — and if we think your
-              carrier is wrong about something, we will tell you why in writing.
+            <p className="mt-6 max-w-xl leading-relaxed text-carbon-400">
+              We photograph before we touch anything, log readings daily, and
+              write scope the way adjusters expect it. We will talk to your
+              adjuster directly if that helps — and if we think your carrier is
+              wrong, we will put why in writing.
             </p>
-            <div className="mt-8">
-              <QuoteButton variant="outline" label="Talk through your claim" />
+            <div className="mt-9 border-l-2 border-hivis-400 pl-6">
+              <p className="leading-relaxed text-paper-100">
+                <strong className="font-semibold text-hivis-400">
+                  Worth knowing:
+                </strong>{" "}
+                you choose your restoration contractor, not your insurer. A
+                carrier can recommend someone from their vendor programme, but in
+                Washington the decision is yours.
+              </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-sand-200 bg-white p-7 shadow-card">
-            <h3 className="font-display text-xl font-bold text-ink-900">
-              What we hand your adjuster
+          <div className="lg:col-span-5 lg:col-start-8">
+            <h3 className="font-display text-xl uppercase tracking-tight text-paper-50">
+              What your adjuster gets
             </h3>
-            <div className="mt-5">
+            <div className="mt-6">
               <CheckList
                 items={[
-                  "Dated photo documentation from before any work started",
-                  "Daily moisture readings with an unaffected-area baseline",
+                  "Dated photographs from before any work started",
+                  "Daily moisture readings against an unaffected baseline",
                   "Written scope of work, line-itemed",
-                  "Equipment logs showing exactly what ran and for how long",
+                  "Equipment logs — what ran, and for exactly how long",
                   "Cause-of-loss findings, which is what determines coverage",
                   "Final dry-standard verification before reconstruction",
                 ]}
               />
             </div>
-            <p className="mt-6 rounded-lg bg-water-50 p-4 text-sm leading-relaxed text-ink-700">
-              <strong className="font-semibold text-ink-900">
-                Worth knowing:
-              </strong>{" "}
-              you choose your restoration contractor, not your insurer. A carrier
-              can recommend someone from their preferred vendor program, but in
-              Washington the decision is yours.
-            </p>
           </div>
         </div>
       </Section>
 
-      {/* ---------------- SERVICE AREA ---------------- */}
-      <Section>
-        <SectionHeading
-          eyebrow="Where we work"
-          title={`Serving ${business.address.city} and Snohomish County`}
-          lead="We are close enough to get there fast, and local enough to know what typically goes wrong in your specific town."
-        />
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {areas.map((area) => (
-            <Link
-              key={area.slug}
-              href={`/areas/${area.slug}`}
-              className="group flex items-center justify-between gap-4 rounded-xl border border-sand-200 bg-white px-5 py-4 transition hover:border-water-300 hover:bg-water-50"
-            >
-              <span>
-                <span className="block font-display text-lg font-bold text-ink-900">
-                  {area.city}, WA
-                </span>
-                <span className="block text-sm text-ink-600">
-                  Typical arrival {area.eta}
-                </span>
-              </span>
-              <ArrowRight className="h-5 w-5 shrink-0 text-water-600 transition group-hover:translate-x-1" />
-            </Link>
-          ))}
+      {/* ================= AREAS ================= */}
+      <Section tone="carbonDeep">
+        <div className="grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <SectionHeading
+              stamp="Coverage"
+              title={
+                <>
+                  Close enough
+                  <br />
+                  to be useful.
+                </>
+              }
+            />
+            <p className="mt-6 leading-relaxed text-carbon-400">
+              Local enough to know which streets flood, which neighbourhoods sit
+              on crawl spaces, and how long it really takes to get to you.
+            </p>
+            <p className="mt-6 leading-relaxed text-carbon-400">
+              Not on the list? Call anyway. If we cannot reach you in time to
+              help, we will say so and point you at someone who can.
+            </p>
+          </div>
+
+          <ul className="grid gap-x-8 sm:grid-cols-2 lg:col-span-7 lg:col-start-6">
+            {areas.map((area) => (
+              <li key={area.slug}>
+                <Link
+                  href={`/areas/${area.slug}`}
+                  className="group flex items-baseline justify-between gap-4 border-b border-carbon-800 py-4 transition-colors hover:border-hivis-400"
+                >
+                  <span className="font-display text-lg uppercase tracking-tight text-paper-100 transition-colors group-hover:text-hivis-400">
+                    {area.city}
+                  </span>
+                  <span className="stamp shrink-0 text-carbon-500">
+                    {area.eta.replace("under ", "≤ ")}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
-        <p className="mt-8 text-ink-700">
-          Not on the list? Call anyway —{" "}
-          <a
-            href={telHref}
-            className="font-bold text-water-700 underline underline-offset-4"
-          >
-            {business.phone.display}
-          </a>
-          . If we cannot get to you in time to help, we will tell you straight
-          and point you at someone who can.
-        </p>
       </Section>
 
-      {/* ---------------- REVIEWS (renders only with real data) ---------------- */}
+      {/* ============ REVIEWS — renders only with real data ============ */}
       {hasReviews ? (
-        <Section tone="sand">
+        <Section tone="carbon">
           <SectionHeading
-            eyebrow="Reviews"
-            title="What our neighbors say"
-            lead={
-              averageRating
-                ? `${averageRating} out of 5 across verified reviews.`
-                : undefined
-            }
+            stamp="Reviews"
+            title="What neighbours say"
+            lead={averageRating ? `${averageRating} of 5 across verified reviews.` : undefined}
           />
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <div className="mt-14 grid gap-8 md:grid-cols-3">
             {featuredReviews.map((review) => (
               <figure
                 key={review.id}
-                className="flex flex-col rounded-2xl border border-sand-200 bg-white p-6 shadow-card"
+                className="flex flex-col border-t-2 border-carbon-700 pt-6"
               >
-                <div className="flex gap-0.5 text-alert-500">
+                <div className="flex gap-1 text-hivis-400">
                   {Array.from({ length: review.rating }).map((_, i) => (
                     <Star key={i} className="h-4 w-4" />
                   ))}
                 </div>
-                <blockquote className="mt-4 flex-1 leading-relaxed text-ink-700">
+                <blockquote className="mt-5 flex-1 leading-relaxed text-carbon-300">
                   {review.text}
                 </blockquote>
-                <figcaption className="mt-5 border-t border-sand-200 pt-4 text-sm">
-                  <span className="font-bold text-ink-900">{review.author}</span>
-                  {review.city ? (
-                    <span className="text-ink-600"> · {review.city}, WA</span>
-                  ) : null}
+                <figcaption className="stamp mt-6 text-carbon-500">
+                  {review.author}
+                  {review.city ? ` · ${review.city}` : ""}
                 </figcaption>
               </figure>
             ))}
           </div>
-          <div className="mt-8">
-            <Link
-              href="/reviews"
-              className="inline-flex items-center gap-1.5 font-bold text-water-700 hover:underline"
-            >
-              Read all reviews
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
         </Section>
       ) : null}
 
-      {/* ---------------- QUOTE FORM ---------------- */}
-      <Section tone="sand" id="quote">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
-          <div>
+      {/* ================= FORM ================= */}
+      <Section tone="paper" id="quote">
+        <div className="grid gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-5">
             <SectionHeading
-              eyebrow="No cost, no obligation"
+              tone="light"
+              stamp="No cost, no obligation"
               title="Tell us what happened"
-              lead="If it is an active emergency, please call instead — a form is slower than a phone, and speed is the whole game right now."
+              lead="If water is moving right now, call instead — a form waits for someone to read it, and right now speed is the whole game."
             />
-            <div className="mt-8">
+            <div className="mt-9">
               <CallButton />
             </div>
-            <div className="mt-10 rounded-xl border border-sand-200 bg-white p-6">
-              <h3 className="font-display text-lg font-bold text-ink-900">
+            <div className="mt-12 border-t-2 border-carbon-950 pt-6">
+              <h3 className="font-display text-lg uppercase tracking-tight text-carbon-950">
                 What happens next
               </h3>
-              <div className="mt-4">
+              <div className="mt-5">
                 <CheckList
+                  tone="light"
                   items={[
-                    "We call you back — same day for anything submitted before evening",
-                    "We ask enough questions to know whether this needs a crew or advice",
-                    "Free on-site assessment with moisture readings, no charge and no pressure",
-                    "A written scope and estimate you can hand to your insurer",
+                    "We call you back — same day for anything sent before evening",
+                    "We ask enough to know whether this needs a crew or just advice",
+                    "Free on-site assessment with real moisture readings",
+                    "A written scope you can hand straight to your insurer",
                   ]}
                 />
               </div>
             </div>
           </div>
-          <QuoteForm />
+
+          <div className="lg:col-span-6 lg:col-start-7">
+            <QuoteForm />
+          </div>
         </div>
       </Section>
 

@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { services, serviceBySlug } from "@/lib/services";
 import { areas } from "@/lib/areas";
-import { business } from "@/lib/business";
-import { serviceIcons, ArrowRight, Alert } from "@/components/icons";
+import { business, telHref } from "@/lib/business";
+import { ArrowRight, Alert, Phone } from "@/components/icons";
 import {
   PageHero,
   Section,
   SectionHeading,
+  Stamp,
   CtaBanner,
   Breadcrumbs,
   CallButton,
@@ -44,7 +45,6 @@ export default async function ServicePage({ params }: Params) {
   const service = serviceBySlug(slug);
   if (!service) notFound();
 
-  const Icon = serviceIcons[service.icon] ?? serviceIcons.droplet;
   const others = services.filter((s) => s.slug !== service.slug).slice(0, 3);
 
   const faqSchema = {
@@ -65,13 +65,13 @@ export default async function ServicePage({ params }: Params) {
       />
 
       <PageHero
-        eyebrow={service.emergency ? "24/7 emergency service" : "Our services"}
-        title={`${service.name} in ${business.address.city}, WA`}
+        stamp={service.emergency ? "24/7 emergency service" : "Service"}
+        title={service.name}
         lead={service.blurb}
       >
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row">
           <CallButton />
-          <QuoteButton variant="light" />
+          <QuoteButton />
         </div>
       </PageHero>
 
@@ -83,74 +83,80 @@ export default async function ServicePage({ params }: Params) {
         ]}
       />
 
-      <Section>
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
-          <div>
-            <span className="grid h-14 w-14 place-items-center rounded-2xl bg-water-100 text-water-700">
-              <Icon className="h-7 w-7" />
-            </span>
-            <div className="mt-6 space-y-5 text-lg leading-relaxed text-ink-700">
+      <Section tone="carbon">
+        <div className="grid gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <div className="space-y-6 text-lg leading-relaxed text-carbon-300">
               {service.intro.map((para) => (
                 <p key={para.slice(0, 40)}>{para}</p>
               ))}
             </div>
 
-            <h2 className="mt-12 font-display text-2xl font-bold text-ink-900">
+            <h2 className="mt-14 font-display text-3xl uppercase tracking-tight text-paper-50">
               What the work includes
             </h2>
-            <div className="mt-5">
+            <div className="mt-7">
               <CheckList items={service.includes} />
             </div>
 
-            <h2 className="mt-12 font-display text-2xl font-bold text-ink-900">
+            <h2 className="mt-14 font-display text-3xl uppercase tracking-tight text-paper-50">
               Common questions
             </h2>
-            <div className="mt-5 divide-y divide-sand-200 border-y border-sand-200">
+            <div className="mt-7 border-t border-carbon-700">
               {service.faqs.map((faq) => (
-                <details key={faq.q} className="group py-5">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-bold text-ink-900">
+                <details key={faq.q} className="group border-b border-carbon-700">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 font-display text-xl uppercase tracking-tight text-paper-50 transition-colors hover:text-hivis-400">
                     {faq.q}
-                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-sand-300 text-ink-600 transition group-open:rotate-45">
+                    <span
+                      aria-hidden="true"
+                      className="grid h-8 w-8 shrink-0 place-items-center border border-carbon-600 font-mono text-lg text-carbon-400 transition-transform group-open:rotate-45"
+                    >
                       +
                     </span>
                   </summary>
-                  <p className="mt-3 leading-relaxed text-ink-700">{faq.a}</p>
+                  <p className="pb-6 leading-relaxed text-carbon-400">{faq.a}</p>
                 </details>
               ))}
             </div>
           </div>
 
-          <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-2xl border border-alert-500/25 bg-alert-600/5 p-6">
-              <span className="grid h-10 w-10 place-items-center rounded-lg bg-alert-600 text-white">
-                <Alert className="h-5 w-5" />
-              </span>
-              <h2 className="mt-4 font-display text-xl font-bold text-ink-900">
-                Signs you need this now
-              </h2>
-              <ul className="mt-4 space-y-2.5">
+          <aside className="space-y-8 lg:col-span-4 lg:col-start-9">
+            <div className="border-2 border-hivis-400">
+              <div className="flex items-center gap-3 bg-hivis-400 px-5 py-3.5">
+                <Alert className="h-4 w-4 shrink-0 text-carbon-950" />
+                <h2 className="font-display text-base uppercase tracking-tight text-carbon-950">
+                  Signs you need this now
+                </h2>
+              </div>
+              <ul className="divide-y divide-carbon-800">
                 {service.signs.map((sign) => (
-                  <li key={sign} className="flex gap-2.5 text-sm leading-relaxed text-ink-800">
-                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-alert-600" />
+                  <li
+                    key={sign}
+                    className="px-5 py-3.5 text-sm leading-relaxed text-carbon-300"
+                  >
                     {sign}
                   </li>
                 ))}
               </ul>
-              <div className="mt-6">
-                <CallButton className="w-full" />
-              </div>
+              <a
+                href={telHref}
+                className="flex items-center justify-between gap-3 border-t-2 border-carbon-800 px-5 py-4 transition-colors hover:bg-carbon-850"
+              >
+                <span className="font-display text-lg tracking-tight text-hivis-400">
+                  {business.phone.display}
+                </span>
+                <Phone className="h-5 w-5 shrink-0 text-hivis-400" />
+              </a>
             </div>
 
-            <div className="rounded-2xl border border-sand-200 bg-sand-50 p-6">
-              <h2 className="font-display text-lg font-bold text-ink-900">
-                Where we provide this
-              </h2>
-              <div className="mt-4 flex flex-wrap gap-2">
+            <div>
+              <Stamp>Where we provide this</Stamp>
+              <div className="mt-5 flex flex-wrap gap-2">
                 {areas.map((area) => (
                   <Link
                     key={area.slug}
                     href={`/areas/${area.slug}`}
-                    className="rounded-full border border-sand-300 bg-white px-3 py-1.5 text-sm font-medium text-ink-800 transition hover:border-water-400 hover:text-water-700"
+                    className="border border-carbon-700 px-3 py-1.5 font-mono text-xs uppercase tracking-wider text-carbon-300 transition-colors hover:border-hivis-400 hover:text-hivis-400"
                   >
                     {area.city}
                   </Link>
@@ -161,34 +167,32 @@ export default async function ServicePage({ params }: Params) {
         </div>
       </Section>
 
-      <Section tone="sand">
-        <SectionHeading eyebrow="Related" title="Other services you may need" />
-        <div className="mt-10 grid gap-5 sm:grid-cols-3">
-          {others.map((other) => {
-            const OtherIcon = serviceIcons[other.icon] ?? serviceIcons.droplet;
-            return (
+      <Section tone="carbonDeep">
+        <SectionHeading stamp="Related" title="Other services you may need" />
+        <ul className="mt-12">
+          {others.map((other, i) => (
+            <li key={other.slug}>
               <Link
-                key={other.slug}
                 href={`/services/${other.slug}`}
-                className="group rounded-2xl border border-sand-200 bg-white p-6 transition hover:border-water-300 hover:shadow-card"
+                className="group flex items-baseline gap-6 border-t border-carbon-700 py-7 transition-colors hover:border-hivis-400 sm:gap-10"
               >
-                <span className="grid h-11 w-11 place-items-center rounded-xl bg-water-100 text-water-700">
-                  <OtherIcon className="h-5 w-5" />
+                <span className="stamp shrink-0 text-carbon-600 transition-colors group-hover:text-hivis-400">
+                  {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-4 font-display text-lg font-bold text-ink-900">
-                  {other.name}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-700">
-                  {other.blurb}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-water-700">
-                  Learn more
-                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+                <span className="flex-1">
+                  <span className="block font-display text-2xl uppercase tracking-tight text-paper-50 transition-colors group-hover:text-hivis-400">
+                    {other.name}
+                  </span>
+                  <span className="mt-2 block max-w-xl leading-relaxed text-carbon-400">
+                    {other.blurb}
+                  </span>
                 </span>
+                <ArrowRight className="h-5 w-5 shrink-0 self-center text-carbon-600 transition-all group-hover:translate-x-1.5 group-hover:text-hivis-400" />
               </Link>
-            );
-          })}
-        </div>
+            </li>
+          ))}
+          <li aria-hidden="true" className="border-t border-carbon-700" />
+        </ul>
       </Section>
 
       <CtaBanner />

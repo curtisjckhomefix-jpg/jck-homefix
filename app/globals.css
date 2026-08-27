@@ -1,44 +1,61 @@
 @import "tailwindcss";
 
+/* =============================================================================
+   JCK HOMEFIX — "FIELD DOCUMENTATION"
+   -----------------------------------------------------------------------------
+   Aesthetic direction: industrial / utilitarian. The visual language of the
+   actual trade — equipment labels, hazard signage, moisture logs, jobsite
+   paperwork — not the soft-blue stock-photo template every competitor uses.
+
+   Rules this design holds to:
+     · Hard edges. Border radius is 0 almost everywhere. Nothing is a pill.
+     · One dominant accent (hi-vis amber) carrying near all the emphasis.
+       Black-on-amber is real safety signage and scores ~12:1.
+     · Type does the work: heavy condensed display, mono for anything that is
+       a reading, a number, or a record.
+     · Texture over gradient. Grain and ruled lines, no blur-blob glows.
+     · Asymmetry. Grid-breaking. Nothing is a tidy 3-up card row.
+   ============================================================================= */
+
 @theme {
-  /* ---- Brand palette -----------------------------------------------------
-     Navy for authority, water-blue for the trade, a hot orange reserved
-     exclusively for emergency CTAs so the phone number never competes with
-     anything else on the page. */
-  --color-ink-950: #06131f;
-  --color-ink-900: #0a1c2e;
-  --color-ink-800: #0f2a43;
-  --color-ink-700: #163c5c;
-  --color-ink-600: #1e5179;
+  /* ---- Core surfaces -------------------------------------------------- */
+  --color-carbon-950: #08080a;
+  --color-carbon-900: #0e0f11;
+  --color-carbon-850: #141518;
+  --color-carbon-800: #1c1e22;
+  --color-carbon-700: #2a2d33;
+  --color-carbon-600: #3d424a;
+  --color-carbon-500: #5a606b;
+  --color-carbon-400: #868d99;
+  --color-carbon-300: #b4bac4;
 
-  --color-water-50: #eef8fe;
-  --color-water-100: #d6eefc;
-  --color-water-200: #b0dff9;
-  --color-water-300: #79c9f4;
-  --color-water-400: #38adea;
-  --color-water-500: #1592d4;
-  --color-water-600: #0a74b2;
-  --color-water-700: #0b5c8f;
-  --color-water-800: #0e4d76;
-  --color-water-900: #114063;
+  /* Warm paper, not clinical white — this is jobsite paperwork. */
+  --color-paper-50: #faf8f4;
+  --color-paper-100: #f2efe7;
+  --color-paper-200: #e5e0d4;
+  --color-paper-300: #d2cbba;
 
-  --color-alert-400: #ff7a45;
-  --color-alert-500: #e04a15;
-  --color-alert-600: #c23c11;
-  --color-alert-700: #9e2f0d;
+  /* ---- The one accent. Hi-vis equipment amber. ------------------------ */
+  --color-hivis-300: #ffd84d;
+  --color-hivis-400: #ffc700;
+  --color-hivis-500: #f5b301;
+  --color-hivis-600: #d69700;
+  --color-hivis-700: #a87500;
 
-  --color-sand-50: #faf9f7;
-  --color-sand-100: #f4f2ee;
-  --color-sand-200: #e7e3dc;
-  --color-sand-300: #d5cfc4;
+  /* ---- Secondary: cold steel, for water/data. Used sparingly. --------- */
+  --color-steel-300: #9fc4d6;
+  --color-steel-400: #6fa3bb;
+  --color-steel-500: #4a7f99;
+  --color-steel-600: #386478;
+  --color-steel-700: #2b4d5c;
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, sans-serif;
-  --font-display: var(--font-outfit), var(--font-inter), ui-sans-serif,
-    system-ui, sans-serif;
+  /* ---- Emergency red. Reserved. Nothing else may use it. -------------- */
+  --color-siren-500: #e63512;
+  --color-siren-600: #c22a0c;
 
-  --shadow-card: 0 1px 2px rgb(6 19 31 / 0.06), 0 8px 24px -12px rgb(6 19 31 / 0.18);
-  --shadow-lift: 0 2px 4px rgb(6 19 31 / 0.08), 0 18px 40px -16px rgb(6 19 31 / 0.28);
+  --font-display: var(--font-archivo-black), "Arial Black", sans-serif;
+  --font-sans: var(--font-plex-sans), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
 @layer base {
@@ -48,19 +65,21 @@
   }
 
   body {
-    background: var(--color-white);
-    color: var(--color-ink-900);
+    background: var(--color-carbon-950);
+    color: var(--color-paper-100);
     font-family: var(--font-sans);
-    text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Display face is heavy and wide — it needs negative tracking and tight
+     leading or it reads as shouting rather than as signage. */
   h1,
   h2,
-  h3,
-  h4 {
+  h3 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+    text-transform: uppercase;
     text-wrap: balance;
   }
 
@@ -68,12 +87,14 @@
     text-wrap: pretty;
   }
 
-  /* Visible, high-contrast focus for keyboard users on a site whose whole
-     job is being usable by a stressed person in a hurry. */
+  ::selection {
+    background: var(--color-hivis-400);
+    color: var(--color-carbon-950);
+  }
+
   :focus-visible {
-    outline: 3px solid var(--color-water-500);
-    outline-offset: 2px;
-    border-radius: 2px;
+    outline: 3px solid var(--color-hivis-400);
+    outline-offset: 3px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -91,21 +112,87 @@
 @utility container-page {
   width: 100%;
   margin-inline: auto;
-  padding-inline: 1.25rem;
-  max-width: 80rem;
+  padding-inline: 1.5rem;
+  max-width: 88rem;
 }
 
-/* Subtle animated wash used behind the hero. Purely decorative. */
-@keyframes drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
+/* -----------------------------------------------------------------------------
+   TEXTURE
+   Self-contained SVG turbulence. Gives surfaces a printed/photocopied tooth so
+   flat color blocks do not read as a template. No external asset, no request.
+   -------------------------------------------------------------------------- */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Hazard stripes — used as thin rules and section dividers, never as fill. */
+@utility hazard-rule {
+  height: 0.5rem;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-hivis-400) 0 0.75rem,
+    var(--color-carbon-950) 0.75rem 1.5rem
+  );
+}
+
+/* Faint engineering grid for dark sections. */
+@utility blueprint {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 3.5rem 3.5rem;
+}
+
+/* Small uppercase mono label — the "field 07 / MOISTURE" stamp motif. */
+@utility stamp {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* -----------------------------------------------------------------------------
+   MOTION
+   One orchestrated page-load cascade rather than scattered micro-interactions.
+   Elements opt in with .rise and stagger via --i.
+   -------------------------------------------------------------------------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
   }
-  50% {
-    transform: translate3d(-2%, 2%, 0) scale(1.08);
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
-.hero-wash {
-  animation: drift 26s ease-in-out infinite;
+.rise {
+  animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+@keyframes sweep {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 3rem 0;
+  }
+}
+
+.sweep {
+  animation: sweep 1.4s linear infinite;
 }

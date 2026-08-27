@@ -21,9 +21,9 @@ export default function PrivacyPage() {
       <PageHero title="Privacy Policy" lead="Short, because we do very little with your data." />
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Privacy" }]} />
 
-      <Section>
-        <div className="max-w-3xl space-y-8 leading-relaxed text-ink-700">
-          <p className="text-sm text-ink-600">
+      <Section tone="carbon">
+        <div className="max-w-3xl space-y-10 leading-relaxed text-carbon-300">
+          <p className="stamp text-carbon-500">
             Last updated{" "}
             {new Date().toLocaleDateString("en-US", {
               month: "long",
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
           </p>
 
           <div>
-            <h2 className="font-display text-2xl font-bold text-ink-900">
+            <h2 className="font-display text-2xl uppercase tracking-tight text-paper-50">
               What we collect
             </h2>
             <p className="mt-3">
@@ -48,7 +48,7 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="font-display text-2xl font-bold text-ink-900">
+            <h2 className="font-display text-2xl uppercase tracking-tight text-paper-50">
               What we do with it
             </h2>
             <p className="mt-3">
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="font-display text-2xl font-bold text-ink-900">
+            <h2 className="font-display text-2xl uppercase tracking-tight text-paper-50">
               How long we keep it
             </h2>
             <p className="mt-3">
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="font-display text-2xl font-bold text-ink-900">
+            <h2 className="font-display text-2xl uppercase tracking-tight text-paper-50">
               Spam protection
             </h2>
             <p className="mt-3">
@@ -87,27 +87,27 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="font-display text-2xl font-bold text-ink-900">
+            <h2 className="font-display text-2xl uppercase tracking-tight text-paper-50">
               Questions
             </h2>
             <p className="mt-3">
               Call{" "}
               <a
                 href={telHref}
-                className="font-semibold text-water-700 underline underline-offset-4"
+                className="font-mono font-semibold text-hivis-400 underline underline-offset-4"
               >
                 {business.phone.display}
               </a>{" "}
               or email{" "}
               <a
                 href={`mailto:${business.email}`}
-                className="font-semibold text-water-700 underline underline-offset-4"
+                className="font-mono font-semibold text-hivis-400 underline underline-offset-4"
               >
                 {business.email}
               </a>
               .
             </p>
-            <p className="mt-3 text-sm text-ink-600">
+            <p className="stamp mt-3 text-carbon-500">
               {business.legalName}, {business.address.city},{" "}
               {business.address.state}
             </p>
