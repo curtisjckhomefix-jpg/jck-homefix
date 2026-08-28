@@ -13,6 +13,16 @@
 
 export const NEEDS_REAL_VALUE = true;
 
+/**
+ * Master switch for search-engine indexing.
+ *
+ * FALSE while the site still advertises a placeholder phone number and an
+ * unconfirmed L&I registration. Flip to `true` at launch — it drives both the
+ * `robots` meta tag (app/layout.tsx) and /robots.txt (app/robots.ts), so this
+ * one line is the whole toggle.
+ */
+export const allowIndexing = false;
+
 export const business = {
   legalName: "J.C.K. HomeFix LLC",
   name: "JCK HomeFix America",
@@ -21,13 +31,23 @@ export const business = {
   description:
     "Emergency water damage restoration for Arlington and Snohomish County homes and businesses. Water extraction, structural drying, mold prevention, and flood cleanup — on site fast, any hour.",
 
-  // ---- CONTACT — all placeholders until confirmed -------------------------
+  /** Owner. Surname still unconfirmed — ask before publishing a full name. */
+  owner: { firstName: "Curtis" },
+
+  // ---- CONTACT ------------------------------------------------------------
   phone: {
-    // Digits only, used for tel: links
+    // Digits only, used for tel: links.
+    //
+    // ⚠️ STILL A PLACEHOLDER. The number supplied (94477774276) could not be
+    // used: it is 11 digits, and 944 is not an assigned NANPA area code, so it
+    // cannot be dialled from a US phone. Snohomish County numbers are 360 or
+    // 425. Confirm the real 10-digit number before launch — this string is the
+    // single most important value on the site.
     raw: "3605550142", // NEEDS_REAL_VALUE
     display: "(360) 555-0142", // NEEDS_REAL_VALUE
   },
-  email: "info@jckhomefixamerica.com", // NEEDS_REAL_VALUE
+  /** Confirmed 2026-08-27. Where quote-request notifications are delivered. */
+  email: "curtis.jckhomefix@gmail.com",
   address: {
     street: "", // NEEDS_REAL_VALUE — omit entirely if they work from home
     city: "Arlington",
@@ -40,8 +60,19 @@ export const business = {
   geo: { lat: 48.1987, lng: -122.1251 },
 
   // ---- CREDENTIALS -------------------------------------------------------
+  //
+  // ⚠️ UNRESOLVED. On 2026-08-27 the full WA L&I contractor registry
+  // (data.wa.gov dataset m8qx-ubtq) was searched for "HOMEFIX", "HOME FIX",
+  // "JCK", and every Arlington-area contractor with a principal named Curtis.
+  // J.C.K. HomeFix LLC does not appear. Either the registration is too recent
+  // for the dataset, it is held under a different legal name, or it does not
+  // exist yet.
+  //
+  // RCW 18.27.020 requires registration to ADVERTISE contracting work, and the
+  // reconstruction this site advertises (drywall, flooring, trim) is
+  // contracting. Do not launch publicly until this is confirmed real.
   license: {
-    lni: "JCKHOL***", // NEEDS_REAL_VALUE — WA L&I contractor registration #
+    lni: "", // NEEDS_REAL_VALUE — verify at secure.lni.wa.gov/verify
     ubi: "", // NEEDS_REAL_VALUE — WA UBI number
     bonded: true,
     insured: true,

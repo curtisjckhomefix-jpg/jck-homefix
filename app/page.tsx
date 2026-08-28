@@ -139,7 +139,10 @@ export default function HomePage() {
                     { label: "Typical arrival", value: business.responseTime },
                     { label: "Phone answered", value: "24 / 7 / 365" },
                     { label: "Workmanship", value: "12-month guarantee" },
-                    { label: "WA L&I reg.", value: business.license.lni },
+                    {
+                      label: "WA L&I reg.",
+                      value: business.license.lni || "Pending",
+                    },
                   ]}
                 />
               </div>

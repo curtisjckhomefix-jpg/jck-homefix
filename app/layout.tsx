@@ -4,7 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { StickyCallBar } from "@/components/sticky-call-bar";
-import { business, addressLine } from "@/lib/business";
+import { business, allowIndexing } from "@/lib/business";
 import { areaCityNames } from "@/lib/areas";
 
 /* Display: heavy industrial grotesque — signage, not startup. */
@@ -61,7 +61,10 @@ export const metadata: Metadata = {
     title: `${business.name} | ${business.tagline}`,
     description: business.description,
   },
-  robots: { index: true, follow: true },
+  // Driven by `allowIndexing` in lib/business.ts — one flip at launch.
+  robots: allowIndexing
+    ? { index: true, follow: true }
+    : { index: false, follow: false, nocache: true },
   alternates: { canonical: "/" },
 };
 

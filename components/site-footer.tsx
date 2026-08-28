@@ -97,27 +97,51 @@ export function SiteFooter() {
             </ul>
 
             {/* Credential plate. RCW 18.27.200 requires the L&I registration
-                number in all advertising, a website included. */}
-            <div className="mt-8 border-2 border-carbon-800 p-5">
-              <p className="stamp text-carbon-500">Registered contractor</p>
-              <p className="mt-3 text-sm font-semibold text-paper-100">
-                {business.legalName}
-              </p>
-              <dl className="mt-3 space-y-1.5">
-                <div className="flex justify-between gap-4">
-                  <dt className="stamp text-carbon-500">WA L&amp;I</dt>
-                  <dd className="font-mono text-xs text-hivis-400">
-                    {business.license.lni}
-                  </dd>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <dt className="stamp text-carbon-500">Status</dt>
-                  <dd className="font-mono text-xs text-carbon-300">
-                    Bonded · Insured
-                  </dd>
-                </div>
-              </dl>
-            </div>
+                number in all advertising, a website included.
+
+                When the number is not set we deliberately render a loud
+                pre-launch warning rather than quietly omitting it or, worse,
+                still claiming "Licensed · Bonded · Insured". An unverifiable
+                credential claim is the one thing on this site that must never
+                render silently. */}
+            {business.license.lni ? (
+              <div className="mt-8 border-2 border-carbon-800 p-5">
+                <p className="stamp text-carbon-500">Registered contractor</p>
+                <p className="mt-3 text-sm font-semibold text-paper-100">
+                  {business.legalName}
+                </p>
+                <dl className="mt-3 space-y-1.5">
+                  <div className="flex justify-between gap-4">
+                    <dt className="stamp text-carbon-500">WA L&amp;I</dt>
+                    <dd className="font-mono text-xs text-hivis-400">
+                      {business.license.lni}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between gap-4">
+                    <dt className="stamp text-carbon-500">Status</dt>
+                    <dd className="font-mono text-xs text-carbon-300">
+                      Bonded · Insured
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            ) : (
+              <div className="mt-8 border-2 border-siren-500 p-5">
+                <p className="stamp text-siren-500">Not ready to launch</p>
+                <p className="mt-3 text-sm leading-relaxed text-carbon-300">
+                  No WA L&amp;I contractor registration number is set. Washington
+                  requires it in all advertising. Set{" "}
+                  <code className="font-mono text-hivis-400">
+                    license.lni
+                  </code>{" "}
+                  in{" "}
+                  <code className="font-mono text-hivis-400">
+                    lib/business.ts
+                  </code>{" "}
+                  before this site goes public.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

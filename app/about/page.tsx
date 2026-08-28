@@ -90,9 +90,9 @@ export default function AboutPage() {
                 — not a day later.
               </p>
               <p>
-                We are based in {business.address.city} and work across{" "}
-                {areas.length} communities in Snohomish County. Licensed, bonded
-                and insured in Washington, and we will hand you the registration
+                {business.owner.firstName} is based in {business.address.city}{" "}
+                and works across {areas.length} communities in Snohomish County.
+                Registered in Washington, and we will hand you the registration
                 number before you think to ask for it.
               </p>
             </div>
@@ -125,8 +125,16 @@ export default function AboutPage() {
               <div className="mt-5">
                 <Readout
                   rows={[
-                    { label: "WA L&I reg.", value: business.license.lni },
-                    { label: "Status", value: "Licensed · Bonded · Insured" },
+                    {
+                      label: "WA L&I reg.",
+                      value: business.license.lni || "Pending — see lib/business.ts",
+                    },
+                    {
+                      label: "Status",
+                      value: business.license.lni
+                        ? "Licensed · Bonded · Insured"
+                        : "Unverified",
+                    },
                     { label: "Established", value: String(business.founded) },
                     {
                       label: "Service area",

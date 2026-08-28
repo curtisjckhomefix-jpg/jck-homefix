@@ -82,7 +82,10 @@ export default function ContactPage() {
                     { label: "Emergency hours", value: "24 / 7 / 365" },
                     { label: "Office hours", value: business.hours.office },
                     { label: "Based in", value: addressLine },
-                    { label: "WA L&I reg.", value: business.license.lni },
+                    {
+                      label: "WA L&I reg.",
+                      value: business.license.lni || "Pending",
+                    },
                   ]}
                 />
               </div>
