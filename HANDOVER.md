@@ -13,13 +13,13 @@ Recommended login for all of them: **`curtis.jckhomefix@gmail.com`**
 | Service | Account today | Correct? | Action |
 |---|---|---|---|
 | **GitHub** | `curtisjckhomefix-jpg` | ✅ | none |
-| **Neon** | JCK account | ✅ | delete the old personal project |
+| **Neon** | JCK account | ✅ | none |
 | **Vercel** | JCK account | ✅ | none |
 | **Resend** | JCK account | ✅ | none |
 | **Cloudinary** | JCK account | ✅ | none |
 
-All five confirmed JCK-owned as of 2026-08-27. The only outstanding cleanup is
-deleting the old Neon project from the personal org.
+**All five confirmed JCK-owned as of 2026-08-27.** Nothing belonging to this
+site lives on a personal account any more.
 
 ---
 
@@ -36,11 +36,12 @@ Region note: `us-east-2` while Vercel functions default to `us-east-1`. That
 adds roughly 10–15ms to the one database round trip a submission makes.
 Irrelevant here; not worth redoing.
 
+The superseded personal-account project `green-shape-89436142` was deleted
+2026-08-27 after confirming it held nothing but test rows.
+
 **Remaining:**
-- [ ] Set `DATABASE_URL` in Vercel to the new pooled string, and redeploy.
+- [ ] Set `DATABASE_URL` in Vercel to the JCK pooled string, and redeploy.
 - [ ] Confirm `/admin` → System status → Database (Neon) is green.
-- [ ] **Delete the old project** `jck-homefix` / `green-shape-89436142` from
-      the personal Neon org. It holds only test rows.
 
 ## 2. Vercel — ✅ JCK-owned
 
