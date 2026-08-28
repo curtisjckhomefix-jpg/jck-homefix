@@ -63,18 +63,45 @@ with `--no-sensitive`, or untick the box in the dashboard.
 
 ## 3. Resend — ✅ JCK-owned
 
-While `QUOTE_FROM_EMAIL=onboarding@resend.dev`, Resend delivers ONLY to the
-address the account is registered under. Confirm that is
-`curtis.jckhomefix@gmail.com`, or lead notifications go to the wrong inbox.
+### The sandbox limit (this is why extra recipients do not work yet)
 
-Once DNS access exists: Domains → add `jckhomefixamerica.com` → add the 3
-records → set `QUOTE_FROM_EMAIL=quotes@jckhomefixamerica.com`. **No mailbox is
-needed** — verification is DNS-only, it just proves ownership.
+While `QUOTE_FROM_EMAIL=onboarding@resend.dev`, Resend delivers **only to the
+one address the Resend account is registered under**. Adding a second
+recipient makes the whole send fail with a 403 — nobody gets it, not even the
+first address. Confirmed in Resend's docs:
+https://resend.com/docs/knowledge-base/403-error-resend-dev-domain
+
+`QUOTE_NOTIFICATION_EMAIL` accepts a comma-separated list, but do not add a
+second address until a domain is verified.
+
+**Want a copy on another inbox today?** Use Gmail forwarding, not Resend:
+`curtis.jckhomefix@gmail.com` → Settings → Forwarding and POP/IMAP → add the
+other address. Zero code, works immediately, and leads still land in the
+business inbox where they belong.
+
+### Once DNS access exists
+
+Domains → add `jckhomefixamerica.com` → add the 3 records → set
+`QUOTE_FROM_EMAIL=quotes@jckhomefixamerica.com`. **No mailbox is needed** —
+verification is DNS-only, it just proves ownership. After that,
+`QUOTE_NOTIFICATION_EMAIL` can list as many recipients as you like.
 
 ## 4. Cloudinary — ✅ JCK-owned
 
 Folders to create: `jck/projects/`, `jck/team/`, `jck/equipment/`, `jck/hero/`.
 Only the cloud name is public; never expose the API secret.
+
+**To test it:**
+
+```bash
+pnpm check-cloudinary                 # reads .env.local
+pnpm check-cloudinary <cloud-name>    # or pass it directly
+pnpm check-cloudinary <cloud> jck/team/curtis   # check your own asset
+```
+
+It fetches the account's built-in `sample` image through four transformation
+URLs — raw delivery, `f_auto,q_auto`, a resize, and a blur placeholder — and
+confirms each returns a real image. A wrong cloud name 404s on all four.
 
 ## 5. Domain
 

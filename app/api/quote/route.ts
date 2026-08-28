@@ -141,8 +141,22 @@ export async function POST(req: Request) {
   `;
 
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.QUOTE_NOTIFICATION_EMAIL ?? business.email;
   const from = process.env.QUOTE_FROM_EMAIL;
+
+  /**
+   * QUOTE_NOTIFICATION_EMAIL accepts a comma-separated list, so leads can go
+   * to several people at once:
+   *   QUOTE_NOTIFICATION_EMAIL=curtis@…,office@…,dustin@…
+   *
+   * ⚠️ While QUOTE_FROM_EMAIL is `onboarding@resend.dev`, Resend's sandbox
+   * only delivers to the ONE address the Resend account is registered under.
+   * Any additional recipient makes the whole send fail with a 403. Verify a
+   * domain first, then add recipients here.
+   */
+  const to = (process.env.QUOTE_NOTIFICATION_EMAIL ?? business.email)
+    .split(",")
+    .map((addr) => addr.trim())
+    .filter(Boolean);
 
   // ---------------------------------------------------------------------
   // TWO independent sinks: the database and the notification email.
@@ -182,7 +196,7 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           from,
-          to: [to],
+          to,
           subject,
           html,
           reply_to: email || undefined,
@@ -192,11 +206,19 @@ export async function POST(req: Request) {
       if (res.ok) {
         emailed = true;
       } else {
-        console.error(
-          "[quote] Resend rejected the send:",
-          res.status,
-          await res.text(),
-        );
+        const detail = await res.text();
+        console.error("[quote] Resend rejected the send:", res.status, detail);
+
+        // The single most likely misconfiguration, and its error text is not
+        // obvious — spell out the actual fix in the log.
+        if (res.status === 403 && from?.endsWith("@resend.dev")) {
+          console.error(
+            "[quote] FIX: onboarding@resend.dev only delivers to the address " +
+              "your Resend account is registered under. Recipients tried: " +
+              `${to.join(", ")}. Either send to that one address, or verify ` +
+              "jckhomefixamerica.com in Resend and set QUOTE_FROM_EMAIL to it.",
+          );
+        }
       }
     } catch (err) {
       console.error("[quote] Send failed:", err);

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "setup-db": "node scripts/setup-db.mjs"
+    "setup-db": "node scripts/setup-db.mjs",
+    "check-cloudinary": "node scripts/check-cloudinary.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
