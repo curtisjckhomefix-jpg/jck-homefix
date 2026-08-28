@@ -21,15 +21,25 @@ import { Redis } from "@upstash/redis";
 const WINDOW = "10 m";
 const MAX_REQUESTS = 5;
 
-const hasUpstash = Boolean(
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN,
-);
+/**
+ * Accept either naming convention. Connecting Upstash through the Vercel
+ * Marketplace provisions KV_REST_API_URL / KV_REST_API_TOKEN, while creating
+ * the database directly on upstash.com gives UPSTASH_REDIS_REST_URL /
+ * UPSTASH_REDIS_REST_TOKEN. Supporting only one silently falls back to the
+ * in-process limiter, which under-enforces without ever erroring.
+ */
+const redisUrl =
+  process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL;
+const redisToken =
+  process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
+
+const hasUpstash = Boolean(redisUrl && redisToken);
 
 export const rateLimitBackend = hasUpstash ? "upstash" : "in-memory";
 
 const limiter = hasUpstash
   ? new Ratelimit({
-      redis: Redis.fromEnv(),
+      redis: new Redis({ url: redisUrl!, token: redisToken! }),
       limiter: Ratelimit.slidingWindow(MAX_REQUESTS, WINDOW),
       prefix: "jck:quote",
       analytics: true,

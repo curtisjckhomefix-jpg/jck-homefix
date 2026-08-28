@@ -3,7 +3,7 @@ import { isAuthenticated, isAdminConfigured } from "@/lib/admin-auth";
 import { listLeads, leadCounts, isDbConfigured, type Lead } from "@/lib/db";
 import { business } from "@/lib/business";
 import { isCloudinaryConfigured, cloudName } from "@/lib/cloudinary";
-import { isTurnstileConfigured } from "@/lib/turnstile";
+import { isTurnstileConfigured, isTurnstileHalfConfigured } from "@/lib/turnstile";
 import { rateLimitBackend } from "@/lib/rate-limit";
 import { LoginForm } from "./login-form";
 import { logout, updateStatus } from "./actions";
@@ -64,7 +64,14 @@ function ConfigPanel() {
       ok: isTurnstileConfigured,
       detail: isTurnstileConfigured
         ? "enforcing"
-        : "TURNSTILE_SECRET_KEY missing — honeypot + time-trap only",
+        : isTurnstileHalfConfigured
+          ? process.env.TURNSTILE_SECRET_KEY
+            ? "HALF-CONFIGURED: site key missing — widget cannot render, so " +
+              "enforcement is disabled. Add NEXT_PUBLIC_TURNSTILE_SITE_KEY as " +
+              "a PLAIN (non-sensitive) variable, then redeploy."
+            : "HALF-CONFIGURED: TURNSTILE_SECRET_KEY missing — widget shows " +
+              "but nothing is verified server-side."
+          : "not configured — honeypot + time-trap only",
     },
     {
       label: "Rate limiting",

@@ -21,7 +21,25 @@
 const VERIFY_URL =
   "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
-export const isTurnstileConfigured = Boolean(process.env.TURNSTILE_SECRET_KEY);
+/**
+ * Enforcement requires BOTH keys.
+ *
+ * The secret alone is the dangerous half-configuration: the server demands a
+ * token that the browser can never produce, because without the public site
+ * key the widget does not render. Every real visitor gets a 403 while bots see
+ * exactly the same thing — the form is simply dead, and nothing in the build
+ * warns you.
+ *
+ * This bit us in production on 2026-08-28: the secret was live, the site key
+ * was not, and the form rejected everyone until it was caught.
+ */
+const hasSecret = Boolean(process.env.TURNSTILE_SECRET_KEY);
+const hasSiteKey = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+
+export const isTurnstileConfigured = hasSecret && hasSiteKey;
+
+/** True for the specific half-configured state described above. */
+export const isTurnstileHalfConfigured = hasSecret !== hasSiteKey;
 
 export type TurnstileResult = {
   ok: boolean;
@@ -47,6 +65,23 @@ export async function verifyTurnstile(
       );
     }
     return { ok: true, degraded: true, reason: "not-configured" };
+  }
+
+  // Secret set, site key missing. Enforcing here would reject every real
+  // visitor, so refuse to enforce and shout about it instead.
+  if (!hasSiteKey) {
+    if (!warnedUnconfigured) {
+      warnedUnconfigured = true;
+      console.error(
+        "[turnstile] HALF-CONFIGURED: TURNSTILE_SECRET_KEY is set but " +
+          "NEXT_PUBLIC_TURNSTILE_SITE_KEY is not, so the widget cannot render " +
+          "and no visitor can produce a token. Verification is DISABLED to " +
+          "avoid rejecting real people. Set the site key as a PLAIN " +
+          "(non-sensitive) variable — marking it sensitive stops Next.js " +
+          "inlining it into the client bundle, with no build error.",
+      );
+    }
+    return { ok: true, degraded: true, reason: "half-configured" };
   }
 
   if (!token) {
