@@ -3,8 +3,10 @@ import { business, telHref, addressLine } from "@/lib/business";
 import { services } from "@/lib/services";
 import { areas } from "@/lib/areas";
 import { Phone } from "@/components/icons";
+import { cloudinaryUrl } from "@/lib/cloudinary";
+import type { SiteLogo } from "@/components/site-header";
 
-export function SiteFooter() {
+export function SiteFooter({ logo = null }: { logo?: SiteLogo }) {
   const year = new Date().getFullYear();
 
   return (
@@ -14,19 +16,33 @@ export function SiteFooter() {
       <div className="container-page relative py-16 lg:py-20">
         <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr_1.1fr]">
           <div>
-            <div className="flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center bg-hivis-400 font-display text-base tracking-tight text-carbon-950">
-                JCK
-              </span>
-              <span className="leading-none">
-                <span className="block font-display text-lg uppercase tracking-tight text-paper-50">
-                  HomeFix America
-                </span>
-                <span className="stamp mt-1.5 block text-carbon-500">
+            {logo ? (
+              <div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={cloudinaryUrl(logo.publicId, { width: 520 })}
+                  alt={logo.alt || business.name}
+                  className="h-12 w-auto max-w-[16rem] object-contain"
+                />
+                <span className="stamp mt-3 block text-carbon-500">
                   Est. {business.founded} · Arlington, WA
                 </span>
-              </span>
-            </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 place-items-center bg-hivis-400 font-display text-base tracking-tight text-carbon-950">
+                  JCK
+                </span>
+                <span className="leading-none">
+                  <span className="block font-display text-lg uppercase tracking-tight text-paper-50">
+                    HomeFix America
+                  </span>
+                  <span className="stamp mt-1.5 block text-carbon-500">
+                    Est. {business.founded} · Arlington, WA
+                  </span>
+                </span>
+              </div>
+            )}
 
             <p className="mt-6 max-w-sm leading-relaxed text-carbon-400">
               Emergency water damage restoration for {business.address.city} and

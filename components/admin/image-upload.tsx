@@ -68,12 +68,16 @@ export function ImageUpload({
   onChange,
   label,
   aspect = "4/3",
+  fit = "cover",
 }: {
   folder: string;
   value: string | null;
   onChange: (publicId: string | null) => void;
   label: string;
   aspect?: string;
+  /** "contain" shows the whole image (logos); "cover" matches how project
+   *  photos are actually displayed on the site, so the preview is honest. */
+  fit?: "cover" | "contain";
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
@@ -146,7 +150,7 @@ export function ImageUpload({
               src={cloudinaryUrl(value, { width: 600 })}
               alt=""
               style={{ aspectRatio: aspect }}
-              className="w-full bg-carbon-950 object-cover"
+              className={`w-full bg-carbon-950 ${fit === "contain" ? "object-contain p-4" : "object-cover"}`}
             />
             <button
               type="button"

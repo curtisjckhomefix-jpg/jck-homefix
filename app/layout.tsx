@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { StickyCallBar } from "@/components/sticky-call-bar";
 import { business, allowIndexing } from "@/lib/business";
 import { areaCityNames } from "@/lib/areas";
+import { getSetting } from "@/lib/db";
 
 /* Display: heavy industrial grotesque — signage, not startup. */
 const archivoBlack = Archivo_Black({
@@ -126,9 +127,18 @@ function localBusinessSchema() {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Uploaded via /admin/branding. Null falls back to the CSS monogram.
+  const [logoPublicId, logoAlt] = await Promise.all([
+    getSetting("logo_public_id"),
+    getSetting("logo_alt"),
+  ]);
+  const logo = logoPublicId
+    ? { publicId: logoPublicId, alt: logoAlt ?? "" }
+    : null;
+
   return (
     <html
       lang="en"
@@ -148,11 +158,11 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <SiteHeader />
+        <SiteHeader logo={logo} />
         <main id="main" className="flex-1">
           {children}
         </main>
-        <SiteFooter />
+        <SiteFooter logo={logo} />
         <StickyCallBar />
       </body>
     </html>

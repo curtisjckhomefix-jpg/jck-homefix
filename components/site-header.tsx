@@ -6,6 +6,7 @@ import { business, telHref } from "@/lib/business";
 import { services } from "@/lib/services";
 import { areas } from "@/lib/areas";
 import { Phone, Menu, Close, ArrowRight } from "@/components/icons";
+import { cloudinaryUrl } from "@/lib/cloudinary";
 
 const nav = [
   { href: "/services", label: "Services" },
@@ -15,8 +16,27 @@ const nav = [
   { href: "/about", label: "About" },
 ];
 
-/** Wordmark. Boxed monogram + stacked lockup, like equipment labelling. */
-function Wordmark() {
+export type SiteLogo = { publicId: string; alt: string } | null;
+
+/**
+ * Wordmark. Falls back to the CSS monogram lockup when no logo is uploaded —
+ * a coloured box with three letters costs no HTTP request, so the fallback is
+ * genuinely better than a placeholder image.
+ */
+function Wordmark({ logo }: { logo: SiteLogo }) {
+  if (logo) {
+    return (
+      <Link href="/" className="flex items-center" aria-label={`${business.name} home`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={cloudinaryUrl(logo.publicId, { width: 480 })}
+          alt={logo.alt || business.name}
+          className="h-11 w-auto max-w-[min(70vw,20rem)] object-contain"
+        />
+      </Link>
+    );
+  }
+
   return (
     <Link href="/" className="group flex items-center gap-3" aria-label={`${business.name} home`}>
       <span className="grid h-11 w-11 shrink-0 place-items-center bg-hivis-400 font-display text-base tracking-tight text-carbon-950 transition-colors group-hover:bg-hivis-300">
@@ -34,7 +54,7 @@ function Wordmark() {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ logo = null }: { logo?: SiteLogo }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -60,7 +80,7 @@ export function SiteHeader() {
 
       <header className="sticky top-0 z-50 border-b-2 border-carbon-800 bg-carbon-950/95 backdrop-blur">
         <div className="container-page flex items-center justify-between gap-6 py-4">
-          <Wordmark />
+          <Wordmark logo={logo} />
 
           <nav className="hidden items-center gap-8 lg:flex" aria-label="Main">
             {nav.map((item) => (

@@ -25,6 +25,7 @@ export function LogoForm({
         onChange={setPublicId}
         label="Logo"
         aspect="3/1"
+        fit="contain"
       />
 
       <div className="mt-6">
