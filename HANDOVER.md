@@ -14,13 +14,12 @@ Recommended login for all of them: **`curtis.jckhomefix@gmail.com`**
 |---|---|---|---|
 | **GitHub** | `curtisjckhomefix-jpg` | ✅ | none |
 | **Neon** | JCK account | ✅ | delete the old personal project |
-| **Vercel** | unknown | ? | verify, move if personal |
-| **Resend** | unknown | ? | verify, move if personal |
-| **Cloudinary** | unknown | ? | verify, move if personal |
+| **Vercel** | JCK account | ✅ | none |
+| **Resend** | JCK account | ✅ | none |
+| **Cloudinary** | JCK account | ✅ | none |
 
-**Now is the cheap moment.** The database holds 5 rows, all of them test data.
-Cloudinary has no assets. Nothing of value is lost by starting these over —
-which will not be true in a month.
+All five confirmed JCK-owned as of 2026-08-27. The only outstanding cleanup is
+deleting the old Neon project from the personal org.
 
 ---
 
@@ -43,16 +42,7 @@ Irrelevant here; not worth redoing.
 - [ ] **Delete the old project** `jck-homefix` / `green-shape-89436142` from
       the personal Neon org. It holds only test rows.
 
-## 2. Vercel
-
-The repo is already owned by `curtisjckhomefix-jpg`, so a JCK Vercel account
-can just import it fresh — no project transfer required.
-
-1. Sign up at vercel.com with the JCK account, connecting the
-   `curtisjckhomefix-jpg` GitHub account.
-2. Import `curtisjckhomefix-jpg/jck-homefix`.
-3. Set the environment variables below.
-4. Check the new deployment works, then delete the old project.
+## 2. Vercel — ✅ JCK-owned
 
 ### Environment variables
 
@@ -70,24 +60,20 @@ can just import it fresh — no project transfer required.
 the client bundle. It fails at runtime with no build error. Add public vars
 with `--no-sensitive`, or untick the box in the dashboard.
 
-## 3. Resend
+## 3. Resend — ✅ JCK-owned
 
-1. Sign up with the JCK account.
-2. Create an API key → `RESEND_API_KEY`.
-3. Until DNS access exists, set `QUOTE_FROM_EMAIL=onboarding@resend.dev`.
-   Note this only delivers to the address the Resend account is registered
-   under — which is why that should be `curtis.jckhomefix@gmail.com`.
-4. Once DNS is available: Domains → add `jckhomefixamerica.com` → add the 3
-   records → then `QUOTE_FROM_EMAIL=quotes@jckhomefixamerica.com`.
-   **No mailbox is needed** — verification is DNS-only, it just proves
-   ownership.
+While `QUOTE_FROM_EMAIL=onboarding@resend.dev`, Resend delivers ONLY to the
+address the account is registered under. Confirm that is
+`curtis.jckhomefix@gmail.com`, or lead notifications go to the wrong inbox.
 
-## 4. Cloudinary
+Once DNS access exists: Domains → add `jckhomefixamerica.com` → add the 3
+records → set `QUOTE_FROM_EMAIL=quotes@jckhomefixamerica.com`. **No mailbox is
+needed** — verification is DNS-only, it just proves ownership.
 
-1. Sign up with the JCK account (free tier is 25GB, far beyond what this needs).
-2. Dashboard → copy the **Cloud name** → `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`.
-3. Create folders: `jck/projects/`, `jck/team/`, `jck/equipment/`, `jck/hero/`.
-4. Never expose the API secret — only the cloud name is public.
+## 4. Cloudinary — ✅ JCK-owned
+
+Folders to create: `jck/projects/`, `jck/team/`, `jck/equipment/`, `jck/hero/`.
+Only the cloud name is public; never expose the API secret.
 
 ## 5. Domain
 
