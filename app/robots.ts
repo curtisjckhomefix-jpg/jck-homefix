@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
     // Pre-launch the whole site is disallowed — it still advertises a
     // placeholder phone number and an unverified L&I registration.
     rules: allowIndexing
-      ? [{ userAgent: "*", allow: "/", disallow: ["/api/"] }]
+      ? [{ userAgent: "*", allow: "/", disallow: ["/api/", "/admin"] }]
       : [{ userAgent: "*", disallow: "/" }],
     ...(allowIndexing ? { sitemap: `${business.url}/sitemap.xml` } : {}),
     host: business.url,
