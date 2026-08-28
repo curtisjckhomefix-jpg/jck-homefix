@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import { business, telHref } from "@/lib/business";
 import { services } from "@/lib/services";
 import { areas } from "@/lib/areas";
-import { hasReviews, featuredReviews, averageRating } from "@/lib/reviews";
+import { getPublishedReviews } from "@/lib/db";
 import { ArrowRight, Star, Phone } from "@/components/icons";
 import {
   Section,
@@ -87,7 +87,15 @@ const dryingLog = {
   baseline: 9.0,
 };
 
-export default function HomePage() {
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const allReviews = await getPublishedReviews();
+  const hasReviews = allReviews.length > 0;
+  const featuredReviews = allReviews.slice(0, 3);
+  const averageRating = hasReviews
+    ? Math.round((allReviews.reduce((s, r) => s + r.rating, 0) / allReviews.length) * 10) / 10
+    : null;
   return (
     <>
       {/* ================= HERO ================= */}
@@ -498,7 +506,7 @@ export default function HomePage() {
                   ))}
                 </div>
                 <blockquote className="mt-5 flex-1 leading-relaxed text-carbon-300">
-                  {review.text}
+                  {review.body}
                 </blockquote>
                 <figcaption className="stamp mt-6 text-carbon-500">
                   {review.author}

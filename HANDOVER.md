@@ -57,6 +57,8 @@ The superseded personal-account project `green-shape-89436142` was deleted
 | `QUOTE_NOTIFICATION_EMAIL` | `curtis.jckhomefix@gmail.com` |
 | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | ⚠️ **must NOT be marked sensitive** |
 | `ADMIN_ACCESS_CODE` | 12+ characters, or `/admin` stays closed |
+| `CLOUDINARY_API_KEY` | Admin uploads. Server-only |
+| `CLOUDINARY_API_SECRET` | Admin uploads. Server-only, never `NEXT_PUBLIC_` |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | ⚠️ **must NOT be marked sensitive** |
 | `TURNSTILE_SECRET_KEY` | Turnstile enforces only once this is set |
 | `UPSTASH_REDIS_REST_URL` | Falls back to in-memory without it |
@@ -109,7 +111,31 @@ It fetches the account's built-in `sample` image through four transformation
 URLs — raw delivery, `f_auto,q_auto`, a resize, and a blur placeholder — and
 confirms each returns a real image. A wrong cloud name 404s on all four.
 
-## 5. Bot protection & rate limiting
+## 5. Managing content (/admin)
+
+Curtis manages these himself — no code changes needed:
+
+| Section | What it does |
+|---|---|
+| `/admin` | Incoming leads, click-to-call, status tracking |
+| `/admin/gallery` | Before/after project photos |
+| `/admin/reviews` | Customer reviews |
+| `/admin/branding` | Site logo |
+
+**Photo uploads** go: pick a file → the browser shrinks it (longest edge 2000px,
+JPEG q82) → the server mints a signed Cloudinary upload → the browser uploads
+DIRECTLY to Cloudinary. Nothing large passes through Vercel, which caps request
+bodies around 4.5MB — a phone photo would routinely exceed that.
+
+Requires `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET` in Vercel. Both are
+server-only; prefixing either with `NEXT_PUBLIC_` would publish your secret to
+every visitor.
+
+**Everything defaults to DRAFT.** New projects and reviews are invisible on the
+public site until Published is ticked. That is the schema enforcing the
+no-fabricated-content rule rather than trusting anyone to remember it.
+
+## 6. Bot protection & rate limiting
 
 Both are wired in and both **degrade gracefully** — the form works today with
 neither configured. Create the accounts under JCK like everything else.
@@ -144,7 +170,7 @@ Verified against Cloudflare's official test keys: an always-fail secret gives
 403, an always-pass secret gives 200, a missing token when configured gives
 403, and no configuration at all still accepts leads.
 
-## 6. Domain
+## 7. Domain
 
 `jckhomefixamerica.com` is registered and currently 301s to the old
 WordPress.com staging site. Curtis controls it; credentials are still pending.

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { reviews, hasReviews, averageRating } from "@/lib/reviews";
+import { getPublishedReviews } from "@/lib/db";
 import { business, telHref } from "@/lib/business";
 import {
   PageHero,
@@ -17,7 +17,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/reviews" },
 };
 
-export default function ReviewsPage() {
+export const revalidate = 60;
+
+export default async function ReviewsPage() {
+  const reviews = await getPublishedReviews();
+  const hasReviews = reviews.length > 0;
+  const averageRating = hasReviews
+    ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10
+    : null;
   return (
     <>
       <PageHero
@@ -56,7 +63,7 @@ export default function ReviewsPage() {
                   </span>
                 </div>
                 <blockquote className="mt-5 flex-1 leading-relaxed text-carbon-300">
-                  {review.text}
+                  {review.body}
                 </blockquote>
                 <figcaption className="stamp mt-6 text-carbon-500">
                   <span className="text-paper-100">{review.author}</span>

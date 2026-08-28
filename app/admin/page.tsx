@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { isAuthenticated, isAdminConfigured } from "@/lib/admin-auth";
 import { listLeads, leadCounts, isDbConfigured, type Lead } from "@/lib/db";
 import { business } from "@/lib/business";
 import { isCloudinaryConfigured, cloudName } from "@/lib/cloudinary";
 import { isTurnstileConfigured, isTurnstileHalfConfigured } from "@/lib/turnstile";
 import { rateLimitBackend } from "@/lib/rate-limit";
-import { LoginForm } from "./login-form";
-import { logout, updateStatus } from "./actions";
+import { updateStatus } from "./actions";
+import { AdminShell } from "@/components/admin/admin-shell";
 
 export const metadata: Metadata = {
   title: "Leads",
@@ -26,14 +25,6 @@ const urgencyLabel: Record<string, string> = {
   ongoing: "Ongoing",
   inspection: "Inspection",
 };
-
-function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="grain blueprint min-h-screen bg-carbon-950 py-16">
-      <div className="container-page">{children}</div>
-    </div>
-  );
-}
 
 /** Answers "is X actually wired up in this environment?" without leaking values. */
 function ConfigPanel() {
@@ -222,47 +213,6 @@ export default async function AdminPage({
 }: {
   searchParams: Promise<{ spam?: string }>;
 }) {
-  // ---- Gate ---------------------------------------------------------------
-  if (!isAdminConfigured()) {
-    return (
-      <Shell>
-        <div className="max-w-xl border-2 border-siren-500 p-8">
-          <h1 className="font-display text-3xl uppercase tracking-tight text-paper-50">
-            Admin is disabled
-          </h1>
-          <p className="mt-5 leading-relaxed text-carbon-300">
-            No <code className="font-mono text-hivis-400">ADMIN_ACCESS_CODE</code>{" "}
-            is set, so this area is closed. Set one (at least 12 characters) in
-            Vercel and redeploy.
-          </p>
-          <p className="mt-4 text-sm leading-relaxed text-carbon-500">
-            This fails closed on purpose — a missing environment variable must
-            never mean the leads are public.
-          </p>
-        </div>
-      </Shell>
-    );
-  }
-
-  if (!(await isAuthenticated())) {
-    return (
-      <Shell>
-        <div className="flex min-h-[60vh] flex-col items-start justify-center">
-          <span className="grid h-12 w-12 place-items-center bg-hivis-400 font-display text-base tracking-tight text-carbon-950">
-            JCK
-          </span>
-          <h1 className="mt-6 font-display text-4xl uppercase tracking-tight text-paper-50">
-            Leads
-          </h1>
-          <p className="mt-3 text-carbon-400">Enter the access code to continue.</p>
-          <div className="mt-8">
-            <LoginForm />
-          </div>
-        </div>
-      </Shell>
-    );
-  }
-
   // ---- Authenticated ------------------------------------------------------
   const { spam } = await searchParams;
   const includeSpam = spam === "1";
@@ -278,37 +228,19 @@ export default async function AdminPage({
   }
 
   return (
-    <Shell>
-      <header className="flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <span className="stamp text-hivis-400">JCK HomeFix</span>
-          <h1 className="mt-3 font-display text-5xl uppercase tracking-tight text-paper-50">
-            Leads
-          </h1>
-          <p className="stamp mt-3 text-carbon-500">
-            {counts.new ?? 0} new · {leads.length} shown ·{" "}
-            {Object.values(counts).reduce((a, b) => a + b, 0)} total
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <a
-            href={includeSpam ? "/admin" : "/admin?spam=1"}
-            className="stamp border border-carbon-700 px-3 py-2 text-carbon-400 transition-colors hover:border-hivis-400 hover:text-hivis-400"
-          >
-            {includeSpam ? "Hide spam" : "Show spam"}
-          </a>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="stamp border border-carbon-700 px-3 py-2 text-carbon-400 transition-colors hover:border-siren-500 hover:text-siren-500"
-            >
-              Sign out
-            </button>
-          </form>
-        </div>
-      </header>
-
-      <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_20rem]">
+    <AdminShell
+      title="Leads"
+      intro={`${counts.new ?? 0} new · ${leads.length} shown · ${Object.values(counts).reduce((a, b) => a + b, 0)} total`}
+      actions={
+        <a
+          href={includeSpam ? "/admin" : "/admin?spam=1"}
+          className="stamp border border-carbon-700 px-3 py-2 text-carbon-400 transition-colors hover:border-hivis-400 hover:text-hivis-400"
+        >
+          {includeSpam ? "Hide spam" : "Show spam"}
+        </a>
+      }
+    >
+      <div className="grid gap-10 lg:grid-cols-[1fr_20rem]">
         <div className="space-y-6">
           {dbError ? (
             <div className="border-2 border-siren-500 p-6">
@@ -335,6 +267,6 @@ export default async function AdminPage({
           <ConfigPanel />
         </aside>
       </div>
-    </Shell>
+    </AdminShell>
   );
 }

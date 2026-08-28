@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { projects, hasProjects } from "@/lib/projects";
+import { getPublishedProjects } from "@/lib/db";
 import { cloudinaryUrl, cloudinaryBlur } from "@/lib/cloudinary";
 import { business, telHref } from "@/lib/business";
 import {
@@ -19,7 +19,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/gallery" },
 };
 
-export default function GalleryPage() {
+export const revalidate = 60;
+
+export default async function GalleryPage() {
+  const projects = await getPublishedProjects();
+  const hasProjects = projects.length > 0;
   return (
     <>
       <PageHero
@@ -42,18 +46,18 @@ export default function GalleryPage() {
           <div className="grid gap-10 lg:grid-cols-2">
             {projects.map((project) => (
               <article
-                key={project.slug}
+                key={project.id}
                 className="border-2 border-carbon-700"
               >
                 <div className="grid grid-cols-2">
                   <figure className="relative">
                     <Image
-                      src={cloudinaryUrl(project.before.publicId, { width: 800 })}
-                      alt={project.before.alt}
+                      src={cloudinaryUrl(project.before_public_id, { width: 800 })}
+                      alt={project.before_alt}
                       width={800}
                       height={600}
                       placeholder="blur"
-                      blurDataURL={cloudinaryBlur(project.before.publicId)}
+                      blurDataURL={cloudinaryBlur(project.before_public_id)}
                       sizes="(max-width: 1024px) 50vw, 25vw"
                       className="aspect-[4/3] w-full object-cover"
                     />
@@ -63,12 +67,12 @@ export default function GalleryPage() {
                   </figure>
                   <figure className="relative border-l-2 border-carbon-950">
                     <Image
-                      src={cloudinaryUrl(project.after.publicId, { width: 800 })}
-                      alt={project.after.alt}
+                      src={cloudinaryUrl(project.after_public_id, { width: 800 })}
+                      alt={project.after_alt}
                       width={800}
                       height={600}
                       placeholder="blur"
-                      blurDataURL={cloudinaryBlur(project.after.publicId)}
+                      blurDataURL={cloudinaryBlur(project.after_public_id)}
                       sizes="(max-width: 1024px) 50vw, 25vw"
                       className="aspect-[4/3] w-full object-cover"
                     />

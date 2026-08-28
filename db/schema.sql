@@ -50,3 +50,58 @@ CREATE INDEX IF NOT EXISTS quote_requests_new_idx
 --
 -- Mark one as followed up:
 --   UPDATE quote_requests SET status='contacted', contacted_at=now() WHERE id=$1;
+
+-- ===========================================================================
+-- MEDIA & CONTENT (added 2026-08-28)
+-- Managed through /admin rather than by editing code.
+-- ===========================================================================
+
+-- Site-wide settings. Key/value so a new setting never needs a migration.
+-- Known keys: logo_public_id, logo_alt
+CREATE TABLE IF NOT EXISTS site_settings (
+  key         text PRIMARY KEY,
+  value       text,
+  updated_at  timestamptz NOT NULL DEFAULT now()
+);
+
+-- Before/after projects shown on /gallery.
+CREATE TABLE IF NOT EXISTS projects (
+  id                bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  slug              text UNIQUE NOT NULL,
+  title             text NOT NULL,
+  city              text NOT NULL,
+  service           text,
+  situation         text,
+  work              text,
+  days              integer,
+  before_public_id  text NOT NULL,
+  before_alt        text NOT NULL DEFAULT '',
+  after_public_id   text NOT NULL,
+  after_alt         text NOT NULL DEFAULT '',
+  published         boolean NOT NULL DEFAULT false,
+  sort_order        integer NOT NULL DEFAULT 0,
+  created_at        timestamptz NOT NULL DEFAULT now(),
+  updated_at        timestamptz NOT NULL DEFAULT now()
+);
+
+-- Customer reviews. published defaults FALSE so nothing reaches the public
+-- site until deliberately published — same principle that kept the original
+-- reviews array empty rather than filled with invented testimonials.
+CREATE TABLE IF NOT EXISTS reviews (
+  id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  author      text NOT NULL,
+  rating      smallint NOT NULL,
+  body        text NOT NULL,
+  city        text,
+  service     text,
+  source      text NOT NULL DEFAULT 'direct',
+  reviewed_on date,
+  published   boolean NOT NULL DEFAULT false,
+  sort_order  integer NOT NULL DEFAULT 0,
+  created_at  timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT reviews_rating_check CHECK (rating BETWEEN 1 AND 5),
+  CONSTRAINT reviews_source_check CHECK (source IN ('google','direct','facebook'))
+);
+
+CREATE INDEX IF NOT EXISTS projects_published_idx ON projects (sort_order, created_at DESC) WHERE published;
+CREATE INDEX IF NOT EXISTS reviews_published_idx ON reviews (sort_order, created_at DESC) WHERE published;
