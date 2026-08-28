@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="JCK HomeFix America">
+  <title>JCK HomeFix America — mark</title>
+  <!-- Hi-vis equipment amber on carbon. Black-on-amber is real safety
+       signage and is the highest-contrast pairing in the brand (~12:1). -->
+  <rect width="512" height="512" fill="#FFC700"/>
+  <!-- Hazard stripe along the base, echoing the site's section rules -->
+  <g clip-path="url(#base)">
+    <rect x="0" y="440" width="512" height="72" fill="#08080a"/>
+    <g fill="#FFC700">
+      <rect x="-60"  y="432" width="30" height="96" transform="rotate(-45 -45 480)"/>
+      <rect x="0"    y="432" width="30" height="96" transform="rotate(-45 15 480)"/>
+      <rect x="60"   y="432" width="30" height="96" transform="rotate(-45 75 480)"/>
+      <rect x="120"  y="432" width="30" height="96" transform="rotate(-45 135 480)"/>
+      <rect x="180"  y="432" width="30" height="96" transform="rotate(-45 195 480)"/>
+      <rect x="240"  y="432" width="30" height="96" transform="rotate(-45 255 480)"/>
+      <rect x="300"  y="432" width="30" height="96" transform="rotate(-45 315 480)"/>
+      <rect x="360"  y="432" width="30" height="96" transform="rotate(-45 375 480)"/>
+      <rect x="420"  y="432" width="30" height="96" transform="rotate(-45 435 480)"/>
+      <rect x="480"  y="432" width="30" height="96" transform="rotate(-45 495 480)"/>
+    </g>
+  </g>
+  <defs><clipPath id="base"><rect x="0" y="440" width="512" height="72"/></clipPath></defs>
+  <text x="256" y="330" text-anchor="middle"
+        font-family="Archivo Black, Arial Black, Helvetica, sans-serif"
+        font-size="188" font-weight="900" letter-spacing="-8" fill="#08080a">JCK</text>
+</svg>
