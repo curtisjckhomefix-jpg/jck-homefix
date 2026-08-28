@@ -35,16 +35,18 @@ export const business = {
   owner: { firstName: "Curtis" },
 
   // ---- CONTACT ------------------------------------------------------------
+  /**
+   * Confirmed 2026-08-27. Digits only in `raw`, used for tel: links.
+   *
+   * Note for whoever edits this next: 947 is a Michigan area code (Oakland
+   * County overlay on 248), not a Washington one. That is fine and dials
+   * correctly — plenty of people keep a cell number after moving — but it does
+   * sit slightly against the "we are local" positioning, so if a 360 or 425
+   * number is ever acquired, switch to it here.
+   */
   phone: {
-    // Digits only, used for tel: links.
-    //
-    // ⚠️ STILL A PLACEHOLDER. The number supplied (94477774276) could not be
-    // used: it is 11 digits, and 944 is not an assigned NANPA area code, so it
-    // cannot be dialled from a US phone. Snohomish County numbers are 360 or
-    // 425. Confirm the real 10-digit number before launch — this string is the
-    // single most important value on the site.
-    raw: "3605550142", // NEEDS_REAL_VALUE
-    display: "(360) 555-0142", // NEEDS_REAL_VALUE
+    raw: "9477774276",
+    display: "(947) 777-4276",
   },
   /** Confirmed 2026-08-27. Where quote-request notifications are delivered. */
   email: "curtis.jckhomefix@gmail.com",

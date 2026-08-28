@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { business } from "@/lib/business";
+import { insertQuoteRequest, markEmailSent, isDbConfigured } from "@/lib/db";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -143,12 +144,79 @@ export async function POST(req: Request) {
   const to = process.env.QUOTE_NOTIFICATION_EMAIL ?? business.email;
   const from = process.env.QUOTE_FROM_EMAIL;
 
-  // No delivery configured. Fail LOUD in production rather than silently
-  // swallowing a lead — a dropped emergency lead is worse than a form error
-  // that tells the visitor to pick up the phone.
-  if (!apiKey || !from) {
+  // ---------------------------------------------------------------------
+  // TWO independent sinks: the database and the notification email.
+  //
+  // The lead survives if EITHER succeeds. We only report failure to the
+  // visitor when BOTH are gone — that is the only case where their request
+  // has genuinely vanished and they need to pick up the phone instead.
+  // ---------------------------------------------------------------------
+  let rowId: number | null = null;
+  let stored = false;
+  let emailed = false;
+
+  if (isDbConfigured) {
+    try {
+      rowId = await insertQuoteRequest({
+        name,
+        phone,
+        email: email || null,
+        city,
+        service: service || null,
+        urgency: urgency || null,
+        message: message || null,
+      });
+      stored = true;
+    } catch (err) {
+      console.error("[quote] DB insert failed:", err);
+    }
+  }
+
+  if (apiKey && from) {
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: [to],
+          subject,
+          html,
+          reply_to: email || undefined,
+        }),
+      });
+
+      if (res.ok) {
+        emailed = true;
+      } else {
+        console.error(
+          "[quote] Resend rejected the send:",
+          res.status,
+          await res.text(),
+        );
+      }
+    } catch (err) {
+      console.error("[quote] Send failed:", err);
+    }
+  }
+
+  // Record whether the notification actually went out, so a lead that is in
+  // the database but never emailed is findable later:
+  //   SELECT * FROM quote_requests WHERE email_sent = false;
+  if (stored && emailed && rowId !== null) {
+    try {
+      await markEmailSent(rowId);
+    } catch (err) {
+      console.error("[quote] Could not flag email_sent:", err);
+    }
+  }
+
+  if (!stored && !emailed) {
     if (process.env.NODE_ENV !== "production") {
-      console.log("[quote] No RESEND_API_KEY/QUOTE_FROM_EMAIL set. Payload:", {
+      console.log("[quote] Nothing configured. Payload:", {
         name,
         phone,
         email,
@@ -157,45 +225,17 @@ export async function POST(req: Request) {
         urgency,
         message,
       });
-      return NextResponse.json({ ok: true, delivered: false });
+      return NextResponse.json({ ok: true, stored: false, emailed: false });
     }
-    console.error("[quote] Lead received but no email delivery configured.");
+    console.error("[quote] LEAD LOST — neither database nor email accepted it.");
     return NextResponse.json(
       { error: "We could not submit that form." },
       { status: 503 },
     );
   }
 
-  try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: [to],
-        subject,
-        html,
-        reply_to: email || undefined,
-      }),
-    });
-
-    if (!res.ok) {
-      const detail = await res.text();
-      console.error("[quote] Resend rejected the send:", res.status, detail);
-      return NextResponse.json(
-        { error: "We could not submit that form." },
-        { status: 502 },
-      );
-    }
-  } catch (err) {
-    console.error("[quote] Send failed:", err);
-    return NextResponse.json(
-      { error: "We could not submit that form." },
-      { status: 502 },
-    );
+  if (!emailed) {
+    console.warn(`[quote] Row ${rowId} stored but NOT emailed — check Resend.`);
   }
 
   return NextResponse.json({ ok: true });

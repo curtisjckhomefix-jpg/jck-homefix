@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import { projects, hasProjects } from "@/lib/projects";
+import { cloudinaryUrl, cloudinaryBlur } from "@/lib/cloudinary";
 import { business, telHref } from "@/lib/business";
 import {
   PageHero,
@@ -47,22 +48,28 @@ export default function GalleryPage() {
                 <div className="grid grid-cols-2">
                   <figure className="relative">
                     <Image
-                      src={project.before.src}
+                      src={cloudinaryUrl(project.before.publicId, { width: 800 })}
                       alt={project.before.alt}
-                      width={640}
-                      height={480}
+                      width={800}
+                      height={600}
+                      placeholder="blur"
+                      blurDataURL={cloudinaryBlur(project.before.publicId)}
+                      sizes="(max-width: 1024px) 50vw, 25vw"
                       className="aspect-[4/3] w-full object-cover"
                     />
                     <figcaption className="absolute left-3 top-3 stamp bg-carbon-950 px-3 py-1.5 text-paper-50">
                       Before
                     </figcaption>
                   </figure>
-                  <figure className="relative border-l-2 border-white">
+                  <figure className="relative border-l-2 border-carbon-950">
                     <Image
-                      src={project.after.src}
+                      src={cloudinaryUrl(project.after.publicId, { width: 800 })}
                       alt={project.after.alt}
-                      width={640}
-                      height={480}
+                      width={800}
+                      height={600}
+                      placeholder="blur"
+                      blurDataURL={cloudinaryBlur(project.after.publicId)}
+                      sizes="(max-width: 1024px) 50vw, 25vw"
                       className="aspect-[4/3] w-full object-cover"
                     />
                     <figcaption className="absolute left-3 top-3 stamp bg-hivis-400 px-3 py-1.5 text-carbon-950">
