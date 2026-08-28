@@ -20,9 +20,9 @@ export function SiteFooter({ logo = null }: { logo?: SiteLogo }) {
               <div>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={cloudinaryUrl(logo.publicId, { width: 520 })}
+                  src={cloudinaryUrl(logo.publicId, { width: 720 })}
                   alt={logo.alt || business.name}
-                  className="h-12 w-auto max-w-[16rem] object-contain"
+                  className="h-14 w-auto max-w-[18rem] object-contain"
                 />
                 <span className="stamp mt-3 block text-carbon-500">
                   Est. {business.founded} · Arlington, WA

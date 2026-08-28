@@ -29,9 +29,9 @@ function Wordmark({ logo }: { logo: SiteLogo }) {
       <Link href="/" className="flex items-center" aria-label={`${business.name} home`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={cloudinaryUrl(logo.publicId, { width: 480 })}
+          src={cloudinaryUrl(logo.publicId, { width: 720 })}
           alt={logo.alt || business.name}
-          className="h-11 w-auto max-w-[min(70vw,20rem)] object-contain"
+          className="h-12 w-auto max-w-[min(62vw,22rem)] object-contain sm:h-14 lg:h-16"
         />
       </Link>
     );
