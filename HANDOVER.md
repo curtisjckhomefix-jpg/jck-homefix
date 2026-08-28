@@ -13,7 +13,7 @@ Recommended login for all of them: **`curtis.jckhomefix@gmail.com`**
 | Service | Account today | Correct? | Action |
 |---|---|---|---|
 | **GitHub** | `curtisjckhomefix-jpg` | ✅ | none |
-| **Neon** | `dustin.t.arnold215059@gmail.com` | ❌ personal | recreate under JCK |
+| **Neon** | JCK account | ✅ | delete the old personal project |
 | **Vercel** | unknown | ? | verify, move if personal |
 | **Resend** | unknown | ? | verify, move if personal |
 | **Cloudinary** | unknown | ? | verify, move if personal |
@@ -24,26 +24,24 @@ which will not be true in a month.
 
 ---
 
-## 1. Neon
+## 1. Neon — ✅ DONE (2026-08-27)
 
-1. Sign out of Neon. Sign up fresh with `curtis.jckhomefix@gmail.com`.
-2. Create a project named **`jck-homefix`**, region **`aws-us-east-1`**
-   (matches Vercel's default function region, so the form's database round
-   trip stays in one datacentre). Keep the default database name `neondb`.
-3. Copy the **pooled** connection string — the one containing `-pooler`.
-4. Apply the schema:
+Now on a JCK-owned account. Endpoint `ep-dry-unit-aewrwcvu`, region
+`aws-us-east-2`, database `neondb`. Schema applied and verified: a form
+submission writes, and `/admin` reads it back.
 
-   ```bash
-   node scripts/setup-db.mjs "postgresql://...paste it here..."
-   ```
+Verified this is genuinely a separate account — the endpoint belongs to none
+of the four projects in the personal org.
 
-   Safe to re-run; every statement is `CREATE ... IF NOT EXISTS`.
-5. Put that connection string in Vercel as `DATABASE_URL`, and in `.env.local`
-   for local work. Redeploy.
-6. Confirm on `/admin` that **System status → Database (Neon)** is green, then
-   delete the old project from the personal account.
+Region note: `us-east-2` while Vercel functions default to `us-east-1`. That
+adds roughly 10–15ms to the one database round trip a submission makes.
+Irrelevant here; not worth redoing.
 
-No data migration is needed — the 5 existing rows are all tests.
+**Remaining:**
+- [ ] Set `DATABASE_URL` in Vercel to the new pooled string, and redeploy.
+- [ ] Confirm `/admin` → System status → Database (Neon) is green.
+- [ ] **Delete the old project** `jck-homefix` / `green-shape-89436142` from
+      the personal Neon org. It holds only test rows.
 
 ## 2. Vercel
 
