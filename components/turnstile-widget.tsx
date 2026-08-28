@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { business, telHref } from "@/lib/business";
+import { Phone } from "@/components/icons";
 
 /**
  * Cloudflare Turnstile widget.
@@ -38,7 +40,7 @@ export function TurnstileWidget({
 }) {
   const holder = useRef<HTMLDivElement>(null);
   const widgetId = useRef<string | null>(null);
-  const [failed, setFailed] = useState(false);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
 
   // Keep the latest callback without re-rendering the widget, which would
   // make Turnstile re-challenge the visitor mid-form.
@@ -63,11 +65,17 @@ export function TurnstileWidget({
         callback: (token: string) => cb.current(token),
         "expired-callback": () => cb.current(null),
         "timeout-callback": () => cb.current(null),
-        "error-callback": () => {
-          // Cloudflare unreachable or blocked by an extension. The server
-          // allows the request through in that case, so do not trap the
-          // visitor behind a widget that will never resolve.
-          setFailed(true);
+        "error-callback": (code?: string) => {
+          // The widget could not run: Cloudflare unreachable, blocked by an
+          // extension, or — most often — this hostname is not in the widget's
+          // Hostname Management list (error 110200).
+          //
+          // We must NOT tell the visitor "you can still submit". The server
+          // rejects tokenless submissions when Turnstile is enforcing, so that
+          // reassurance was a lie and left people stuck on a dead form. Show
+          // the phone number instead, which is the honest fallback for an
+          // emergency service.
+          setErrorCode(code ?? "unknown");
           cb.current(null);
         },
       });
@@ -82,7 +90,7 @@ export function TurnstileWidget({
       s.async = true;
       s.defer = true;
       s.onload = render;
-      s.onerror = () => setFailed(true);
+      s.onerror = () => setErrorCode("script-load-failed");
       document.head.appendChild(s);
     } else {
       document.getElementById(SCRIPT_ID)?.addEventListener("load", render);
@@ -106,10 +114,24 @@ export function TurnstileWidget({
   return (
     <div className="mt-6">
       <div ref={holder} />
-      {failed ? (
-        <p className="stamp mt-2 text-carbon-600">
-          Verification unavailable — you can still submit
-        </p>
+      {errorCode ? (
+        <div className="mt-3 border-2 border-siren-500 p-4">
+          <p className="text-sm leading-relaxed text-carbon-900">
+            <strong className="font-semibold">
+              Security check could not load.
+            </strong>{" "}
+            This form may not go through. Please call us instead — we answer
+            around the clock.
+          </p>
+          <a
+            href={telHref}
+            className="mt-3 inline-flex items-center gap-2.5 bg-siren-600 px-5 py-3 font-display text-base uppercase tracking-tight text-white transition-colors hover:bg-siren-500"
+          >
+            <Phone className="h-4 w-4" />
+            {business.phone.display}
+          </a>
+          <p className="stamp mt-3 text-carbon-600">Reference: {errorCode}</p>
+        </div>
       ) : null}
     </div>
   );
