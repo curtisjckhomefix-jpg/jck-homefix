@@ -1,4 +1,4 @@
--- JCK HomeFix — Neon schema (project green-shape-89436142, db "jckhomefix")
+-- JCK HomeFix — Neon schema (project green-shape-89436142, db "neondb")
 --
 -- ALREADY APPLIED. Nothing runs this file automatically: Vercel's build is a
 -- plain `next build`. This is the reference copy of what exists in Neon.
