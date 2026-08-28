@@ -17,6 +17,8 @@ Recommended login for all of them: **`curtis.jckhomefix@gmail.com`**
 | **Vercel** | JCK account | ✅ | none |
 | **Resend** | JCK account | ✅ | none |
 | **Cloudinary** | JCK account | ✅ | none |
+| **Cloudflare** | not created | ⬜ | Turnstile keys — free |
+| **Upstash** | not created | ⬜ | Redis rate limiting — free |
 
 **All five confirmed JCK-owned as of 2026-08-27.** Nothing belonging to this
 site lives on a personal account any more.
@@ -55,6 +57,10 @@ The superseded personal-account project `green-shape-89436142` was deleted
 | `QUOTE_NOTIFICATION_EMAIL` | `curtis.jckhomefix@gmail.com` |
 | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | ⚠️ **must NOT be marked sensitive** |
 | `ADMIN_ACCESS_CODE` | 12+ characters, or `/admin` stays closed |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | ⚠️ **must NOT be marked sensitive** |
+| `TURNSTILE_SECRET_KEY` | Turnstile enforces only once this is set |
+| `UPSTASH_REDIS_REST_URL` | Falls back to in-memory without it |
+| `UPSTASH_REDIS_REST_TOKEN` | |
 
 ⚠️ **The sensitive-flag trap.** Vercel defaults Production variables to
 "sensitive", which silently stops any `NEXT_PUBLIC_*` value being inlined into
@@ -103,7 +109,42 @@ It fetches the account's built-in `sample` image through four transformation
 URLs — raw delivery, `f_auto,q_auto`, a resize, and a blur placeholder — and
 confirms each returns a real image. A wrong cloud name 404s on all four.
 
-## 5. Domain
+## 5. Bot protection & rate limiting
+
+Both are wired in and both **degrade gracefully** — the form works today with
+neither configured. Create the accounts under JCK like everything else.
+
+### Cloudflare Turnstile (free)
+
+dash.cloudflare.com → Turnstile → Add site → domain `jckhomefixamerica.com`
+(add `localhost` too for local testing). Copy both keys into Vercel.
+
+Until `TURNSTILE_SECRET_KEY` is set the form is protected only by the honeypot
+and time-trap. Those held for a while on the other sites and then stopped —
+expect to need this eventually, not immediately.
+
+### Upstash Redis (free)
+
+console.upstash.com → Create Database → REST API → copy URL and token.
+
+Without it the limiter counts in-process, which does not work across
+serverless instances: five function instances means five separate counters.
+
+### Failure modes, chosen deliberately
+
+Both **fail OPEN**. If Cloudflare or Upstash is unreachable, the submission is
+allowed through and the failure is logged loudly.
+
+This is the right trade-off *for this site specifically*: someone standing in
+a flooded hallway at 2am must not be turned away because a third-party service
+had an outage. Taking some spam is survivable; dropping a real emergency lead
+is not. An ordinary signup form should fail closed here — this one should not.
+
+Verified against Cloudflare's official test keys: an always-fail secret gives
+403, an always-pass secret gives 200, a missing token when configured gives
+403, and no configuration at all still accepts leads.
+
+## 6. Domain
 
 `jckhomefixamerica.com` is registered and currently 301s to the old
 WordPress.com staging site. Curtis controls it; credentials are still pending.

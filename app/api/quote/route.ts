@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { business } from "@/lib/business";
 import { insertQuoteRequest, markEmailSent, isDbConfigured } from "@/lib/db";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,29 +16,9 @@ type QuotePayload = {
   urgency?: string;
   message?: string;
   company_website?: string; // honeypot
+  turnstileToken?: string;
   elapsedMs?: number;
 };
-
-/**
- * Naive in-process rate limit. Good enough to blunt a script; it does NOT
- * survive across serverless instances. If this form starts drawing real abuse,
- * add Cloudflare Turnstile (see TURNSTILE note below) rather than tightening
- * this, because that is what actually worked on the other sites.
- */
-const hits = new Map<string, { count: number; resetAt: number }>();
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_PER_WINDOW = 5;
-
-function rateLimited(ip: string) {
-  const now = Date.now();
-  const entry = hits.get(ip);
-  if (!entry || now > entry.resetAt) {
-    hits.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return false;
-  }
-  entry.count += 1;
-  return entry.count > MAX_PER_WINDOW;
-}
 
 /**
  * Only trust the LEFTMOST x-forwarded-for entry, and only because Vercel
@@ -85,10 +67,23 @@ export async function POST(req: Request) {
   }
 
   const ip = clientIp(req);
-  if (rateLimited(ip)) {
+
+  const rl = await checkRateLimit(ip);
+  if (rl.limited) {
     return NextResponse.json(
       { error: "Too many requests. Please call us directly." },
       { status: 429 },
+    );
+  }
+
+  // Turnstile. Skipped when unconfigured; allowed through (loudly) when
+  // Cloudflare itself is unreachable — see lib/turnstile.ts for why.
+  const turnstile = await verifyTurnstile(body.turnstileToken, ip);
+  if (!turnstile.ok) {
+    console.warn(`[quote] Turnstile rejected a submission: ${turnstile.reason}`);
+    return NextResponse.json(
+      { error: "We could not verify that you are human. Please call us." },
+      { status: 403 },
     );
   }
 

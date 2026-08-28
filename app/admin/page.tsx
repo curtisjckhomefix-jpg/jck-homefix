@@ -3,6 +3,8 @@ import { isAuthenticated, isAdminConfigured } from "@/lib/admin-auth";
 import { listLeads, leadCounts, isDbConfigured, type Lead } from "@/lib/db";
 import { business } from "@/lib/business";
 import { isCloudinaryConfigured, cloudName } from "@/lib/cloudinary";
+import { isTurnstileConfigured } from "@/lib/turnstile";
+import { rateLimitBackend } from "@/lib/rate-limit";
 import { LoginForm } from "./login-form";
 import { logout, updateStatus } from "./actions";
 
@@ -56,6 +58,21 @@ function ConfigPanel() {
       detail: isCloudinaryConfigured
         ? `cloud: ${cloudName}`
         : "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME missing or marked sensitive",
+    },
+    {
+      label: "Bot protection (Turnstile)",
+      ok: isTurnstileConfigured,
+      detail: isTurnstileConfigured
+        ? "enforcing"
+        : "TURNSTILE_SECRET_KEY missing — honeypot + time-trap only",
+    },
+    {
+      label: "Rate limiting",
+      ok: rateLimitBackend === "upstash",
+      detail:
+        rateLimitBackend === "upstash"
+          ? "Upstash — shared across instances"
+          : "in-memory fallback — not shared across serverless instances",
     },
     {
       label: "L&I registration",

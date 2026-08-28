@@ -5,6 +5,7 @@ import { areas } from "@/lib/areas";
 import { services } from "@/lib/services";
 import { business, telHref } from "@/lib/business";
 import { Check, Alert, Phone } from "@/components/icons";
+import { TurnstileWidget, turnstileSiteKey } from "@/components/turnstile-widget";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -29,6 +30,7 @@ export function QuoteForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [urgency, setUrgency] = useState("urgent");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const mountedAt = useRef<number>(0);
 
   useEffect(() => {
@@ -49,6 +51,7 @@ export function QuoteForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
+          turnstileToken,
           // Time-trap: a human cannot meaningfully fill this in under 3s.
           elapsedMs: Date.now() - mountedAt.current,
         }),
@@ -66,6 +69,9 @@ export function QuoteForm() {
       setError(
         err instanceof Error ? err.message : "Something went wrong. Please call us.",
       );
+      // Turnstile tokens are single-use — clear it so a retry gets a fresh one.
+      setTurnstileToken(null);
+      window.turnstile?.reset();
     }
   }
 
@@ -288,6 +294,8 @@ export function QuoteForm() {
           .
         </p>
       ) : null}
+
+      <TurnstileWidget onToken={setTurnstileToken} />
 
       <button
         type="submit"
