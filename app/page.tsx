@@ -95,7 +95,7 @@ export default function HomePage() {
         <div className="container-page relative pb-20 pt-16 sm:pt-20 lg:pb-28 lg:pt-24">
           <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
             {/* Headline column — deliberately overruns the halfway line */}
-            <div className="lg:col-span-7">
+            <div className="min-w-0 lg:col-span-7">
               <div className="rise" style={{ "--i": 0 } as CSSProperties}>
                 <Stamp>
                   Arlington · Snohomish County · Est. {business.founded}
@@ -150,7 +150,7 @@ export default function HomePage() {
 
             {/* Triage panel — hard-edged, offset, breaks the grid downward */}
             <aside
-              className="rise lg:col-span-5 lg:mt-16"
+              className="min-w-0 rise lg:col-span-5 lg:mt-16"
               style={{ "--i": 3 } as CSSProperties}
             >
               <div className="border-2 border-hivis-400 bg-carbon-900">
@@ -203,7 +203,7 @@ export default function HomePage() {
       {/* ================= SERVICES — index, not cards ================= */}
       <Section tone="carbon">
         <div className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="min-w-0 lg:col-span-5">
             <SectionHeading
               stamp="What we do"
               title={
@@ -217,7 +217,7 @@ export default function HomePage() {
             />
           </div>
 
-          <ul className="lg:col-span-7">
+          <ul className="min-w-0 lg:col-span-7">
             {services.map((service, i) => (
               <li key={service.slug}>
                 <Link
@@ -227,7 +227,7 @@ export default function HomePage() {
                   <span className="stamp shrink-0 text-carbon-600 transition-colors group-hover:text-hivis-400">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="flex-1">
+                  <span className="min-w-0 flex-1">
                     <span className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
                       <span className="font-display text-2xl uppercase tracking-tight text-paper-50 transition-colors group-hover:text-hivis-400 sm:text-3xl">
                         {service.name}
@@ -254,7 +254,7 @@ export default function HomePage() {
       {/* ========= THE DIFFERENTIATOR — an actual drying log ========= */}
       <Section tone="carbonDeep" grid>
         <div className="grid gap-14 lg:grid-cols-12 lg:items-center">
-          <div className="lg:col-span-5">
+          <div className="min-w-0 lg:col-span-5">
             <SectionHeading
               stamp="How you know it is dry"
               title={
@@ -275,14 +275,21 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Log sheet */}
-          <figure className="lg:col-span-7">
+          {/* Log sheet. min-w-0 is load-bearing: as a grid item this would
+              otherwise refuse to shrink below the table's min-w-[34rem],
+              which forced the entire page to 572px on mobile. */}
+          <figure className="min-w-0 lg:col-span-7">
             <div className="border-2 border-carbon-700 bg-carbon-900">
               <figcaption className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-carbon-700 px-5 py-4">
                 <span className="stamp text-hivis-400">
                   Drying log — supply line failure
                 </span>
                 <span className="stamp text-carbon-500">Example record</span>
+                {/* The table scrolls sideways on narrow screens. Without this
+                    nothing signals that days 3 and 4 exist. */}
+                <span className="stamp w-full text-carbon-500 lg:hidden">
+                  Swipe the table for days 3–4 →
+                </span>
               </figcaption>
 
               <div className="overflow-x-auto">
@@ -377,7 +384,7 @@ export default function HomePage() {
       {/* ================= INSURANCE ================= */}
       <Section tone="carbon">
         <div className="grid gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-6">
+          <div className="min-w-0 lg:col-span-6">
             <SectionHeading
               stamp="Insurance claims"
               title={
@@ -407,7 +414,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="lg:col-span-5 lg:col-start-8">
+          <div className="min-w-0 lg:col-span-5 lg:col-start-8">
             <h3 className="font-display text-xl uppercase tracking-tight text-paper-50">
               What your adjuster gets
             </h3>
@@ -430,7 +437,7 @@ export default function HomePage() {
       {/* ================= AREAS ================= */}
       <Section tone="carbonDeep">
         <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
+          <div className="min-w-0 lg:col-span-4">
             <SectionHeading
               stamp="Coverage"
               title={
@@ -451,7 +458,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <ul className="grid gap-x-8 sm:grid-cols-2 lg:col-span-7 lg:col-start-6">
+          <ul className="min-w-0 grid gap-x-8 sm:grid-cols-2 lg:col-span-7 lg:col-start-6">
             {areas.map((area) => (
               <li key={area.slug}>
                 <Link
@@ -506,7 +513,7 @@ export default function HomePage() {
       {/* ================= FORM ================= */}
       <Section tone="paper" id="quote">
         <div className="grid gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="min-w-0 lg:col-span-5">
             <SectionHeading
               tone="light"
               stamp="No cost, no obligation"
@@ -534,7 +541,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="lg:col-span-6 lg:col-start-7">
+          <div className="min-w-0 lg:col-span-6 lg:col-start-7">
             <QuoteForm />
           </div>
         </div>

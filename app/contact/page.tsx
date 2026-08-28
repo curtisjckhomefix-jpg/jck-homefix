@@ -49,7 +49,7 @@ export default function ContactPage() {
 
       <Section tone="carbon">
         <div className="grid gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="min-w-0 lg:col-span-5">
             {/* Emergency block — siren red is reserved for exactly this */}
             <div className="border-2 border-siren-500">
               <div className="flex items-center gap-3 bg-siren-600 px-6 py-4">
@@ -96,7 +96,7 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-6 lg:col-start-7">
+          <div className="min-w-0 lg:col-span-6 lg:col-start-7">
             <QuoteForm />
           </div>
         </div>

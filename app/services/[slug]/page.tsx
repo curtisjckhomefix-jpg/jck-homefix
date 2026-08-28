@@ -85,7 +85,7 @@ export default async function ServicePage({ params }: Params) {
 
       <Section tone="carbon">
         <div className="grid gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-7">
+          <div className="min-w-0 lg:col-span-7">
             <div className="space-y-6 text-lg leading-relaxed text-carbon-300">
               {service.intro.map((para) => (
                 <p key={para.slice(0, 40)}>{para}</p>
@@ -120,7 +120,7 @@ export default async function ServicePage({ params }: Params) {
             </div>
           </div>
 
-          <aside className="space-y-8 lg:col-span-4 lg:col-start-9">
+          <aside className="min-w-0 space-y-8 lg:col-span-4 lg:col-start-9">
             <div className="border-2 border-hivis-400">
               <div className="flex items-center gap-3 bg-hivis-400 px-5 py-3.5">
                 <Alert className="h-4 w-4 shrink-0 text-carbon-950" />
@@ -179,7 +179,7 @@ export default async function ServicePage({ params }: Params) {
                 <span className="stamp shrink-0 text-carbon-600 transition-colors group-hover:text-hivis-400">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="flex-1">
+                <span className="min-w-0 flex-1">
                   <span className="block font-display text-2xl uppercase tracking-tight text-paper-50 transition-colors group-hover:text-hivis-400">
                     {other.name}
                   </span>

@@ -43,11 +43,11 @@ export default function AreasPage() {
                 href={`/areas/${area.slug}`}
                 className="group grid gap-5 border-t border-carbon-700 py-9 transition-colors hover:border-hivis-400 lg:grid-cols-12 lg:gap-10"
               >
-                <div className="flex items-baseline gap-6 lg:col-span-4">
+                <div className="flex min-w-0 items-baseline gap-6 lg:col-span-4">
                   <span className="stamp shrink-0 text-carbon-600 transition-colors group-hover:text-hivis-400">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span>
+                  <span className="min-w-0">
                     <span className="block font-display text-3xl uppercase tracking-tight text-paper-50 transition-colors group-hover:text-hivis-400">
                       {area.city}
                     </span>
@@ -58,11 +58,11 @@ export default function AreasPage() {
                   </span>
                 </div>
 
-                <p className="leading-relaxed text-carbon-400 lg:col-span-6">
+                <p className="min-w-0 leading-relaxed text-carbon-400 lg:col-span-6">
                   {area.intro[0]}
                 </p>
 
-                <div className="flex items-center justify-between gap-4 lg:col-span-2 lg:justify-end">
+                <div className="min-w-0 flex items-center justify-between gap-4 lg:col-span-2 lg:justify-end">
                   <span className="stamp text-hivis-400">
                     {area.eta.replace("under ", "≤ ")}
                   </span>

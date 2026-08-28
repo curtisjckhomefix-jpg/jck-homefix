@@ -80,7 +80,7 @@ export default async function AreaPage({ params }: Params) {
 
       <Section tone="carbon">
         <div className="grid gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-7">
+          <div className="min-w-0 lg:col-span-7">
             <SectionHeading
               stamp={`Serving ${area.city}`}
               title={`Why ${area.city} homes flood`}
@@ -138,7 +138,7 @@ export default async function AreaPage({ params }: Params) {
             </div>
           </div>
 
-          <aside className="space-y-10 lg:col-span-4 lg:col-start-9">
+          <aside className="min-w-0 space-y-10 lg:col-span-4 lg:col-start-9">
             <div>
               <Stamp>Services in {area.city}</Stamp>
               <ul className="mt-5">
@@ -178,7 +178,7 @@ export default async function AreaPage({ params }: Params) {
 
       <Section tone="paper">
         <div className="grid gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="min-w-0 lg:col-span-5">
             <SectionHeading
               tone="light"
               stamp={`${area.city}, WA`}
@@ -189,7 +189,7 @@ export default async function AreaPage({ params }: Params) {
               <CallButton />
             </div>
           </div>
-          <div className="lg:col-span-6 lg:col-start-7">
+          <div className="min-w-0 lg:col-span-6 lg:col-start-7">
             <QuoteForm />
           </div>
         </div>

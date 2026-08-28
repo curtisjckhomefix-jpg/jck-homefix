@@ -81,6 +81,11 @@
     line-height: 0.95;
     text-transform: uppercase;
     text-wrap: balance;
+    /* Heavy display type at clamp() minimums still produces words wider than
+       a 320px screen — "DEHUMIDIFICATION" is 16 characters. Without this the
+       word pushes the whole page sideways. Safety net only; the real fix is
+       min-w-0 on the flex/grid parent. */
+    overflow-wrap: break-word;
   }
 
   p {

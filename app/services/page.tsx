@@ -43,16 +43,16 @@ export default function ServicesPage() {
                 href={`/services/${service.slug}`}
                 className="group grid gap-6 border-t border-carbon-700 py-10 transition-colors hover:border-hivis-400 lg:grid-cols-12 lg:gap-10"
               >
-                <div className="flex items-baseline gap-6 lg:col-span-5">
+                <div className="flex min-w-0 items-baseline gap-6 lg:col-span-5">
                   <span className="stamp shrink-0 text-carbon-600 transition-colors group-hover:text-hivis-400">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <h2 className="font-display text-3xl uppercase tracking-tight text-paper-50 transition-colors group-hover:text-hivis-400 sm:text-4xl">
+                  <h2 className="min-w-0 font-display text-3xl uppercase tracking-tight text-paper-50 transition-colors group-hover:text-hivis-400 sm:text-4xl">
                     {service.name}
                   </h2>
                 </div>
 
-                <div className="lg:col-span-6">
+                <div className="min-w-0 lg:col-span-6">
                   <p className="leading-relaxed text-carbon-400">
                     {service.blurb}
                   </p>
@@ -63,7 +63,7 @@ export default function ServicesPage() {
                   ) : null}
                 </div>
 
-                <div className="flex items-center lg:col-span-1 lg:justify-end">
+                <div className="min-w-0 flex items-center lg:col-span-1 lg:justify-end">
                   <ArrowRight className="h-6 w-6 text-carbon-600 transition-all group-hover:translate-x-1.5 group-hover:text-hivis-400" />
                 </div>
               </Link>

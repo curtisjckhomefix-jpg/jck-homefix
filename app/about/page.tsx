@@ -56,7 +56,7 @@ export default function AboutPage() {
 
       <Section tone="carbon">
         <div className="grid gap-14 lg:grid-cols-12">
-          <div className="lg:col-span-7">
+          <div className="min-w-0 lg:col-span-7">
             <SectionHeading
               stamp="Our story"
               title={
@@ -116,7 +116,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <aside className="lg:col-span-4 lg:col-start-9">
+          <aside className="min-w-0 lg:col-span-4 lg:col-start-9">
             <Stamp>Credentials</Stamp>
             <div className="mt-5 border-2 border-carbon-700 p-6">
               <p className="font-display text-lg uppercase tracking-tight text-paper-50">
