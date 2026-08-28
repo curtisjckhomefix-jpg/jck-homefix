@@ -63,14 +63,17 @@ export async function createSession(): Promise<void> {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    path: "/admin",
+    // MUST be "/" not "/admin": the upload-signature endpoint lives at
+    // /api/admin/..., which is a different path, so a cookie scoped to
+    // /admin is never sent to it and every upload 401s.
+    path: "/",
     maxAge: Math.floor(SESSION_MS / 1000),
   });
 }
 
 export async function destroySession(): Promise<void> {
   const jar = await cookies();
-  jar.delete({ name: COOKIE, path: "/admin" });
+  jar.delete({ name: COOKIE, path: "/" });
 }
 
 /** True only for a present, unexpired, correctly-signed session. */
