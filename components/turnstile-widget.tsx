@@ -61,6 +61,7 @@ export function TurnstileWidget({
       widgetId.current = window.turnstile.render(holder.current, {
         sitekey: turnstileSiteKey,
         theme: "dark",
+        size: "flexible",
         action: "quote-request",
         callback: (token: string) => cb.current(token),
         "expired-callback": () => cb.current(null),
@@ -113,7 +114,9 @@ export function TurnstileWidget({
 
   return (
     <div className="mt-6">
-      <div ref={holder} />
+      <div className="turnstile-fit">
+        <div ref={holder} />
+      </div>
       {errorCode ? (
         <div className="mt-3 border-2 border-siren-500 p-4">
           <p className="text-sm leading-relaxed text-carbon-900">

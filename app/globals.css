@@ -201,3 +201,43 @@
 .sweep {
   animation: sweep 1.4s linear infinite;
 }
+
+/* -----------------------------------------------------------------------------
+   TURNSTILE FIT
+
+   Cloudflare renders Turnstile as a fixed-width iframe — 300px at both the
+   "normal" and "flexible" sizes. On a 320px phone the quote form's content box
+   is only ~224px, so the widget spills past the form border.
+
+   Scale it down anchored to the top-left and clip the reserved height to match,
+   so no empty gap is left behind. The breakpoints below are derived from the
+   form's inner width at each viewport, not guessed.
+   -------------------------------------------------------------------------- */
+.turnstile-fit {
+  max-width: 100%;
+}
+
+.turnstile-fit > div {
+  transform-origin: left top;
+}
+
+/* < 26rem (416px): form inner width is under 300px */
+@media (max-width: 25.999rem) {
+  .turnstile-fit {
+    overflow: hidden;
+    height: 56px;
+  }
+  .turnstile-fit > div {
+    transform: scale(0.86);
+  }
+}
+
+/* < 22.5rem (360px): tighter still */
+@media (max-width: 22.499rem) {
+  .turnstile-fit {
+    height: 48px;
+  }
+  .turnstile-fit > div {
+    transform: scale(0.73);
+  }
+}
